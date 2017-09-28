@@ -1,6 +1,6 @@
 
-include $(top_srcdir)/conf/kscripts/build_common.am
-include $(top_srcdir)/conf/kscripts/toolchain.am
+include $(top_srcdir)/conf/kscripts/build_common.mk
+include $(top_srcdir)/conf/kscripts/toolchain.mk
 
 ## ////////////////////////////////////////////////////////////////////////// ##
 ## /// ACTIVATE HELP TARGET ///////////////////////////////////////////////// ##
@@ -25,12 +25,14 @@ ${DL} ${TMP}:
 # docker build targets 
 @AX_DOCKER_BUILD_TARGETS@
 
+NODOCKERBUILD =
+
 ## /////////////////////////////////////////////////////////////////////////////
 ## // RECONFIGURE  /////////////////////////////////////////////////////////////
 ## /////////////////////////////////////////////////////////////////////////////
 
 .PHONY: reconfigure
-reconfigure: ##@micellaneous re-run configure with last passed arguments
+reconfigure: ##@miscellaneous re-run configure with last passed arguments
 	@ \
 	echo " -- Reconfiguring build with following parameters: -----------"; \
 	echo $(shell $(abs_top_builddir)/config.status --config);              \
@@ -40,5 +42,9 @@ reconfigure: ##@micellaneous re-run configure with last passed arguments
 	$(abs_top_srcdir)/configure $(shell $(abs_top_builddir)/config.status --config);
 	
 
+print-banner: ##@miscellaneous print logo
+	-@ cat $(top_srcdir)/docs/logo.txt
+
+help: print-banner
 
 
