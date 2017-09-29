@@ -65,7 +65,7 @@ AC_DEFUN([AX_CHECK_ENABLE_DEBUG],[
     m4_define(ax_disable_debug_vars,[m4_normalize(ifelse([$3],,[NDEBUG],[$3]))])
 
     AC_ARG_ENABLE(debug,
-	[AS_HELP_STRING([--enable-debug=]@<:@yes/info/profile/no@:>@,[compile with debugging])],
+	[],
 	[],enable_debug=$ax_enable_debug_default)
 
     # empty mean debug yes
@@ -113,7 +113,9 @@ AC_DEFUN([AX_CHECK_ENABLE_DEBUG],[
     dnl Define various variables if debugging is disabled.
     dnl assert.h is a NOP if NDEBUG is defined, so define it by default.
     AS_IF([test "x$enable_debug" = "xyes"],
-      [m4_map_args_w(ax_enable_debug_vars, [AC_DEFINE(], [,,[Define if debugging is enabled])])],
-      [m4_map_args_w(ax_disable_debug_vars, [AC_DEFINE(], [,,[Define if debugging is disabled])])])
+      [m4_map_args_w(ax_enable_debug_vars, [AC_DEFINE(], [,,[Define if debugging is enabled])])]
+      :,
+      [m4_map_args_w(ax_disable_debug_vars, [AC_DEFINE(], [,,[Define if debugging is disabled])])]
+      :)
     ax_enable_debug=$enable_debug
 ])

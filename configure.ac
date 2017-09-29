@@ -1,12 +1,16 @@
 dnl Process this file with autoconf to produce a configure script.
 
 dnl AUTOCONF ///////////////////////////////////////////////////////////////////
-AC_PREREQ([2.69])
-AC_INIT([autoconf-bootstrap], [0.1], [andrea.rgn@gmail.com])
-AC_CONFIG_MACRO_DIRS([m4])
+dnl AC_PREREQ([2.63])
+AC_INIT([autoconf-bootstrap],[0.1],[andrea.rgn@gmail.com])
+dnl AC_CONFIG_MACRO_DIRS([m4])
 AC_CONFIG_AUX_DIR([conf])
 dnl AC_CONFIG_SRCDIR([...])
 AC_CANONICAL_TARGET
+
+m4_version_prereq([2.69],[],
+[m4_include([m4/m4_prereq_2.69.m4])])
+
 
 dnl AUTOMAKE ///////////////////////////////////////////////////////////////////
 AM_INIT_AUTOMAKE([foreign subdir-objects])
@@ -42,7 +46,7 @@ AS_VAR_IF([CONFIG_ENABLE_DOCKER_BUILD],[y],[
 
 AX_KCONFIG_VAR([DOCKER_SHARES])
 AC_SUBST([DOCKER_SHARES])
-AX_DOCKER_BUILD
+AX_DOCKER_BUILD([bootstrap])
 
 # //////////////////////////////////////////////////////////////////////////// #
 
@@ -147,16 +151,11 @@ AS_ECHO(["MODULES_DISABLED --------> ${MODULES_DISABLED}"])
 AS_ECHO(["MODULES -----------------> ${MODULES}"])
 AS_ECHO()
 
-
-
-
 # // GIT IGNORE // #
 AX_GITIGNORE_SUBST
 
-AC_CONFIG_FILES( 
-                 Makefile
-				 codac/Makefile
-				 codac/units/Makefile
-				 .gitignore
-               )
+AC_CONFIG_FILES( Makefile
+		 codac/Makefile
+		 codac/units/Makefile
+		 .gitignore )
 AC_OUTPUT
