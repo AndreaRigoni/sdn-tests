@@ -9,6 +9,13 @@ if [ -d conf/kconfig ]; then
  popd
 fi
 
+if [ -d node ]; then
+ pushd node
+ ./bootstrap
+ popd
+fi
+
+
 aclocal -I ./m4 
 
 autoheader

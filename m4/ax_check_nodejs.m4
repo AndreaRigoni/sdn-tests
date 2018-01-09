@@ -1,0 +1,5 @@
+
+
+AC_DEFUN([AX_CHECK_NODEJS],[
+AC_CHECK_PROG([$1],[node])
+])

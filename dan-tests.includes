@@ -72,10 +72,30 @@ codac/units/m-DAN-sample/src/test/c++/dan-reader/readDANDataByAbsTime
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-tcn-lib/src/main/c/include
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-log-lib/src/main/c++/include
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-DAN-sample/src/main/c++/include
-# /home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-daq/src/main/c/include
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-daq/src/main/c/include
 
 
 
 
 
 
+codac/units/m-DAN-sample/src/main/c++/MySecondDANProgram
+m4
+node
+build/codac/tmp
+codac/tmp
+build/codac/units/m-DAN-sample/src/main/c++/MyFirstDANProgram
+build/codac/units/m-maven-iter-settings
+build/codac/units/m2
+build/codac/units/m-maven-iter-plugin
+build/codac/units/m-codac-unit-api
+build/codac/units/m-codac-unit-installer
+build/codac/units/m-codac-unit-installer/codac-unit-installer
+build/codac/units/m-dan-common/src/test/c/test_time
+conf/kscripts
+.
+codac/docker
+build/codac/units/m-maven-iandc-plugin
+build/codac/units/m-epics/base-3.15.5/src/ca/client
+build/codac/units/m-DAN-thrput/src/main/c++/MyFirstDANProgram
+build/codac/units/m-DAN-thrput/src/main/c++/pv_test

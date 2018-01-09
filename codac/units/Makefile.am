@@ -1,65 +1,91 @@
 include $(top_srcdir)/Common.mk
 include $(srcdir)/../CodacDev.mk
 
-SVN_URL     ?= https://svnpub.iter.org/codac/iter
-SVN_BRA     ?= trunk
-DEV_DIR     ?= codac/dev/units
-ICDEV_DIR   ?= codac/icdev/units
 
 
-IC_UNITS  = m-DAN-sample
-DEV_UNITS =
+## ////////////////////////////////////////////////////////////////////////// ##
+## /// UNITS //////////////////////////////////////////////////////////////// ##
+## ////////////////////////////////////////////////////////////////////////// ##
+
 NAME     ?= $(lastword $(IC_UNITS))
+SVN_BRA  = branches/codac-core-5.4
 
-NODOCKERBUILD += all $(IC_UNITS) $(DEV_UNITS) ic-dialog dev-dialog
+IC_UNITS  = \
+			m-DAN-sample \
+			m-DAN-thrput
+
+DEV_UNITS = \
+			m-maven-iter-settings \
+			m-codac-unit-api \
+			m-maven-iter-plugin
+
+
+
+m_maven_iter_settings_SVN_DEP =
+
+m_codac_unit_api_SVN_DEP = m-maven-iter-settings
+
+m_maven_iter_plugin_SVN_DEP = m-maven-iter-settings \
+							  m-codac-unit-api
+
+m_dan_common_SVN_DEP = m-codac-unit-api \
+					   m-maven-iter-plugin
+
+
 
 $(IC_UNITS):
-	@ svn co $(SVN_URL)/$(ICDEV_DIR)/$@/$(SVN_BRA) $@; \
-	  ln -sr $@ $(srcdir)/$@
+	@ $(MAKE) svn_co NAME=$@ SVN_DIR=$(ICDEV_DIR)
+
+$(DEV_UNITS):
+	@ $(MAKE) svn_co NAME=$@ SVN_DIR=$(DEV_DIR)
+
+.PHONY: download-all
+download-all: ##@svnpub perform svn checkout on all deps
+	@ $(foreach x,$(SVN_DEP),$(MAKE) $x;)
 
 
-ic-dialog: ##@svnpub manually download icdev units
-ic-dialog: dialog_svnpub_download.sh
-	@ . $< $(SVN_URL) $(DEV_DIR) $(SVN_BRA)
-
-
-
-dev-dialog: ##@svnpub manually download devel units
-dev-dialog: dialog_svnpub_download.sh
-	@ . $< $(SVN_URL) $(DEV_DIR) $(SVN_BRA)
-
-
-all: $(IC_UNITS) mvn-compile mvn-run
-
+all: $(NAME) mvn-compile
 
 ## ////////////////////////////////////////////////////////////////////////// ##
 ## /// MAVEN //////////////////////////////////////////////////////////////// ##
 ## ////////////////////////////////////////////////////////////////////////// ##
 
-MVN_TARGETS = compile \
-			  run \
-			  stop \
-			  migrate \
-			  clean
-
 
 export MVN_ARGS ?=
 
+export MAVEN_HOME   ?= $(abs_top_builddir)/codac/mavenrepo
+export MVN_SETTINGS ?= $(abs_top_srcdir)/codac/maven_settings.xml
+export M2_HOME      ?= $(MAVEN_HOME)
+export M3_HOME      ?= $(MAVEN_HOME)
 
 mvn-compile: ##@mvn perform maven action on unit: $(NAME)
 mvn-run: ##@mvn perform maven action on unit: $(NAME)
 mvn-stop: ##@mvn perform maven action on unit: $(NAME)
 
-mvn-run:  dan-aw-start dan-api-init
-# mvn-stop: dan-api-close
 
-mvn-%: $(NAME)
+mvn-run:  dan-aw-start dan-api-init
+mvn-stop: dan-api-close
+
+$(MAVEN_HOME):
+	$(info )
+	$(info CREATING NEW MAVENREPO FORM /opt/codac/common/mavenrepo  )
+	$(info -------------------------------------------------------  )
+	$(info )
+	cp -a /opt/codac/common/mavenrepo $@
+
+
+mvn-%-all: ##@mvn perform install on all deps
+	@ $(foreach x,$(SVN_DEP),$(MAKE) $@ NAME=$x;) \
+	  $(MAKE) $(subst -all,,$@)
+
+mvn-%: $(NAME) $(MAVEN_HOME)
 	@ $(info )
 	  $(info Performing target: $(subst mvn-,,$@) on unit: $(NAME) )
 	  $(info ----------------------------------------------------  )
 	  $(info )
 	  cd $(NAME); \
-	  mvn $(subst mvn-,,$@) ${MVN_ARGS}
+	  mvn  $(subst mvn-,,$@) -s $(MVN_SETTINGS) $(MVN_ARGS)
+
 
 
 ## ////////////////////////////////////////////////////////////////////////// ##
@@ -78,7 +104,6 @@ dan-api-init:   ##@dan DAN-API initialize unit PCF config
 dan-api-reload: ##@dan DAN-API reload unit PCF config
 dan-api-init dan-api-reload:
 	- $(call _env_set) \
-	  \
 	  $(foreach x,$(CU_PCF_DANCONF),nohup $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@) $x;)
 
 dan-api-close:  ##@dan DAN-API close all active API

@@ -28,27 +28,37 @@ AS_VAR_SET([srcdir],[${srcdir}])
 AS_VAR_SET([builddir],[$(pwd)])
 AX_KCONFIG([conf/kconfig])
 
-dnl AX_TARGET_SELFHELP /////////////////////////////////////////////////////////
-AX_TARGET_SELFHELP
 
 # //////////////////////////////////////////////////////////////////////////// #
 # //  DOCKER BUILD /////////////////////////////////////////////////////////// #
 # //////////////////////////////////////////////////////////////////////////// #
 
 AS_VAR_IF([CONFIG_ENABLE_DOCKER_BUILD],[y],[
-           AS_VAR_SET_IF([CONFIG_DOCKER_CONTAINER], 
-              [AS_VAR_SET([DOCKER_CONTAINER],[${CONFIG_DOCKER_CONTAINER}])] )
-           AS_VAR_SET_IF([CONFIG_DOCKER_IMAGE], 
-              [AS_VAR_SET([DOCKER_IMAGE],[${CONFIG_DOCKER_IMAGE}])] )
-           AS_VAR_SET_IF([CONFIG_DOCKER_URL], 
-              [AS_VAR_SET([DOCKER_URL],[${CONFIG_DOCKER_URL}])])
-          ])
+		  AS_VAR_SET_IF([CONFIG_DOCKER_CONTAINER],
+			 [AS_VAR_SET([DOCKER_CONTAINER],[${CONFIG_DOCKER_CONTAINER}])] )
+		  AS_VAR_SET_IF([CONFIG_DOCKER_IMAGE],
+			 [AS_VAR_SET([DOCKER_IMAGE],[${CONFIG_DOCKER_IMAGE}])] )
+		  AS_VAR_SET_IF([CONFIG_DOCKER_URL],
+			 [AS_VAR_SET([DOCKER_URL],[${CONFIG_DOCKER_URL}])])
+		 ])
 
-AX_KCONFIG_VAR([DOCKER_SHARES])
+AX_KCONFIG_VAR_WITH([DOCKER_SHARES],["set with DOCKER_SHARES"])
 AC_SUBST([DOCKER_SHARES])
+AX_KCONFIG_VAR_WITH([DOCKER_NETWORKS],["set with DOCKER_NETWORKS"])
+AC_SUBST([DOCKER_NETWORKS])
+AX_KCONFIG_VAR_WITH([DOCKER_ENTRYPOINT],["set with DOCKER_ENTRYPOINT"])
+AC_SUBST([DOCKER_ENTRYPOINT])
+AX_KCONFIG_VAR_WITH([DOCKER_PS1],["set with DOCKER_PS1"])
+AC_SUBST([DOCKER_PS1])
+
 AX_DOCKER_BUILD([bootstrap])
 
-# //////////////////////////////////////////////////////////////////////////// #
+
+dnl AX_TARGET_SELFHELP /////////////////////////////////////////////////////////
+AX_TARGET_SELFHELP
+
+
+
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -61,6 +71,7 @@ AC_PROG_AWK
 AC_PROG_MKDIR_P
 AC_PROG_SED
 AC_PROG_CC
+AC_PROG_CXX
 
 AC_CHECK_PROGS([CURL],[curl])
 AC_CHECK_PROGS([TAR],[gtar tar])
@@ -105,57 +116,44 @@ AX_KCONFIG_VAR_WITH([CROSS_COMPILE],["Set crosscompile command"])
 AC_SUBST([CROSS_COMPILE])
 
 
+
+
+
 # //////////////////////////////////////////////////////////////////////////// #
-# //  EXAMPLES /////////////////////////////////////////////////////////////// #
+# //  CODAC    /////////////////////////////////////////////////////////////// #
 # //////////////////////////////////////////////////////////////////////////// #
 
-
-AX_KCONFIG_VAR_ENABLE([EXAMPLE_BOOL_VAR],["Set example bool var"])
-AC_SUBST([EXAMPLE_BOOL_VAR])
-
-AX_KCONFIG_VAR_WITH([EXAMPLE_STRING_VAR],["Set example string var"])
-AC_SUBST([EXAMPLE_STRING_VAR])
-
-AX_KCONFIG_MODULES([MDS],[java],[])
-AX_KCONFIG_MODULES([MDS],[lv],[labview],
-			 [ni],[national instruments components])
-AC_SUBST(MDS_JAVA)
-AC_SUBST(MDS_LV)
-AC_SUBST(MDS_NI)
-AC_SUBST(MDS_MODULES)
+m4_sinclude(conf/kscripts/iter_codac.ac)
 
 
-AX_KCONFIG_MODULES([],[mod1],[],
-		      [mod2],[],
-		      [mod3],[])
-AC_SUBST(MOD1)
-AC_SUBST(MOD2)
-AC_SUBST(MOD3)
-AC_SUBST(MODULES)
+dnl # //////////////////////////////////////////////////////////////////////////// #
+dnl # // NODEJS  ///////////////////////////////////////////////////////////////// #
+dnl # //////////////////////////////////////////////////////////////////////////// #
+
+AC_CONFIG_SUBDIRS([node])
 
 
-AS_ECHO()
-AS_BOX([// EXAMPLES CONFIG VARIABLES //////], [\/])
-AS_ECHO()
-AS_ECHO(["EXAMPLE_BOOL_VAR --------> $EXAMPLE_BOOL_VAR"])
-AS_ECHO(["EXAMPLE_STRING_VAR ------> $EXAMPLE_STRING_VAR"])
-AS_ECHO()
-AS_ECHO(["MDS_MODULES_AVAILABLE ---> ${MDS_MODULES_AVAILABLE}"])
-AS_ECHO(["MDS_MODULES_ENABLED -----> ${MDS_MODULES_ENABLED}"])
-AS_ECHO(["MDS_MODULES_DISABLED ----> ${MDS_MODULES_DISABLED}"])
-AS_ECHO(["MDS_MODULES -------------> ${MDS_MODULES}"])
-AS_ECHO()
-AS_ECHO(["MODULES_AVAILABLE -------> ${MODULES_AVAILABLE}"])
-AS_ECHO(["MODULES_ENABLED ---------> ${MODULES_ENABLED}"])
-AS_ECHO(["MODULES_DISABLED --------> ${MODULES_DISABLED}"])
-AS_ECHO(["MODULES -----------------> ${MODULES}"])
-AS_ECHO()
 
 # // GIT IGNORE // #
 AX_GITIGNORE_SUBST
 
+
 AC_CONFIG_FILES( Makefile
-		 codac/Makefile
-		 codac/units/Makefile
-		 .gitignore )
+				 codac/Makefile
+				 codac/units/Makefile
+				 codac/tmp/Makefile
+				 codac/docker/Makefile
+				 .gitignore )
 AC_OUTPUT
+
+
+
+dnl # //////////////////////////////////////////////////////////////////////////
+dnl # //  UTILS   //////////////////////////////////////////////////////////////
+dnl # //////////////////////////////////////////////////////////////////////////
+
+
+# // remove this when ax_config_subdirs is added to repository
+AC_DEFUN([AX_CONFIG_SCRIPTS],
+[m4_map_args_w([$1],[m4_sinclude(conf/kscripts/],[)])])
+
