@@ -10,38 +10,43 @@ include $(top_srcdir)/conf/kscripts/iter_codac.mk
 # Disable any target be executed inside docker image here
 NODOCKERBUILD += %
 
-$(NAME).tar: $(NAME).img
+if ENABLE_LIBGUEST_DKIMG
+$(CODAC_NAME).tar: $(CODAC_NAME).img
 	@
 	echo "Extracting tar from qcow2 image: this can take a while ...."; \
-	docker pull $(LIBGUEST_DKIMG); \
-	docker run --rm -v $(shell pwd $(builddir)):/mnt $(LIBGUEST_DKIMG) \
-	 sh -c "cd mnt; virt-tar-out -a $(NAME).img / $@";
+	docker pull $(CODAC_LIBGUEST_DKIMG); \
+	docker run --rm -v $(shell pwd $(builddir)):/mnt $(CODAC_LIBGUEST_DKIMG) \
+	 sh -c "cd mnt; virt-tar-out -a $(CODAC_NAME).img / $@";
+else
+$(CODAC_NAME).tar:
+	$(error please enable libguest via docker)
+endif
 
-.PHONY: $(NAME)_entry.sh
-$(NAME)_entry.sh:
+.PHONY: $(CODAC_NAME)_entry.sh
+$(CODAC_NAME)_entry.sh:
 	@ [ -f $@ ] || cp $(srcdir)/$@ .
 
 .PHONY: .dockerignore
 .dockerignore:
 	@ cat > $@ << EOF
 	*
-	!$(NAME).tar
+	!$(CODAC_NAME).tar
 	!Dockerfile
-	!$(NAME)_entry.sh
+	!$(CODAC_NAME)_entry.sh
 	EOF
 
 .PHONY: Dockerfile
-Dockerfile: $(NAME)_entry.sh .dockerignore
+Dockerfile: $(CODAC_NAME)_entry.sh .dockerignore
 	@ cat > $@ << EOF
 	FROM scratch
-	ADD $(NAME).tar /
-	COPY $(NAME)_entry.sh /root
-	ENTRYPOINT /root/$(NAME)_entry.sh
+	ADD $(CODAC_NAME).tar /
+	COPY $(CODAC_NAME)_entry.sh /root
+	ENTRYPOINT /root/$(CODAC_NAME)_entry.sh
 	EOF
 
 docker-image: ##@codac build docker from valid tar file
-docker-image: Dockerfile $(NAME).tar
-	docker build -t $(NAME):$(VERSION) -f $< .
+docker-image: Dockerfile $(CODAC_NAME).tar
+	docker build -t $(CODAC_NAME):$(VERSION) -f $< .
 
 
 ## ////////////////////////////////////////////////////////////////////////// ##
@@ -50,8 +55,8 @@ docker-image: Dockerfile $(NAME).tar
 
 MOSTLYCLEANFILES = Dockerfile $(DOWNLOADS)
 clean-all:
-	docker rmi $(LIBGUEST_DKIMG);
-	rm -rfi $(NAME).tar $(NAME).img
+	docker rmi $(CODAC_LIBGUEST_DKIMG);
+	rm -rfi $(CODAC_NAME).tar $(CODAC_NAME).img
 
 
 
