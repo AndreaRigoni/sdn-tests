@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+  BOY Files Navigation
+  CODAC-VERSION: 5.4.0
+  WARNING: This is an SDD generated file. Contact codac-support for any query.
+-->
+
+ <CBS name="SYSM" description="Sub System - &apos;EC&apos;s System Monitoring Summary" enabled="true" opi_file="./../sdd/quad_hd/EC-SYSM.opi LEVEL=ITER-EC-SYSM" deprecated="false" alarm_root="/CODAC_AlarmHandler/EC/EC-SYSM" xmlns:xi="http://www.w3.org/2001/XInclude" ></CBS>

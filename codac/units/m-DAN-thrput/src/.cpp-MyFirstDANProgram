@@ -1,0 +1,7 @@
+#Mon Dec 04 16:03:33 CET 2017
+service=true
+dan=true
+sdn=true
+inpath=true
+prog=MyFirstDANProgram
+hasCompileStage=true

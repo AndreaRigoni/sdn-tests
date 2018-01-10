@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+  BOY Files Navigation
+  CODAC-VERSION: 5.4.0
+  WARNING: This is an SDD generated file. Contact codac-support for any query.
+-->
+
+ <CBS name="ACQ" description="New Function" enabled="true" opi_file="./../ITER-EC-DAN-ACQ.opi LEVEL=ITER-EC-DAN-ACQ" deprecated="false" alarm_root="/CODAC_AlarmHandler/EC/EC-DAN/EC-DAN-ACQ" xmlns:xi="http://www.w3.org/2001/XInclude" >
+     <CBS name="dummy" description="dummy" enabled="false" opi_file="" deprecated="false" alarm_root="" xmlns:xi="http://www.w3.org/2001/XInclude" ></CBS>
+</CBS>

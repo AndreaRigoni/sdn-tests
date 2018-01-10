@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psic:IandCProject xmlns:pbs="http://www.iter.org/CODAC/PBS/2012"
+                   xmlns:psic="http://www.iter.org/CODAC/PlantSystemIandC/2015"
+                   xmlns:units="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-1.0"
+                   xmlns:epics="http://www.iter.org/CODAC/EPICS/2015"
+                   xmlns:beast="http://www.iter.org/CODAC/BEAST/2012"
+                   xmlns:ps="http://www.iter.org/CODAC/PlantSystem/2014"
+                   xmlns:adm="http://www.iter.org/CODAC/Admin/2012"
+                   xmlns:icp="http://www.iter.org/CODAC/ICP/2012"
+                   xmlns:linux="http://www.iter.org/CODAC/Linux/2013"
+                   xmlns:codac="http://www.iter.org/CODAC/CODACSystem/2013"
+                   xmlns:beauty="http://www.iter.org/CODAC/BEAUTY/2012"
+                   xmlns:boy="http://www.iter.org/CODAC/BOY/2012"
+                   xmlns:cat="http://www.iter.org/CODAC/Catalog/2010"
+                   xmlns:hw="http://www.iter.org/CODAC/Hardware/2013"
+                   xmlns:ns15="http://www.iter.org/CODAC/CLM/2014"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   name="DAN-sample"
+                   CODACVersion="5.4.0"
+                   XMLFormatVersion="5.2.0"
+                   processedOn="44c338e20cb6"
+                   version="1"
+                   createdAt="2015-01-20T09:55:35.018+01:00"
+                   modifiedAt="2017-09-27T12:23:25.381+02:00"
+                   savedAt="2017-09-27T15:03:06.758+02:00"
+                   createdBy="andrea"
+                   modifiedBy="andrea"
+                   xsi:schemaLocation="http://www.iter.org/CODAC/PlantSystemIandC/2015 ../xsd/PlantSystemIandC.xsd">
+   <psic:CBS>
+      <psic:node name="EC" description="Electron Cyclotron Heating and CD">
+         <psic:ext>
+            <psic:PBS>52</psic:PBS>
+         </psic:ext>
+         <psic:node name="DAN" description="">
+            <psic:ext>
+               <psic:PSIC>EC-DAN</psic:PSIC>
+            </psic:ext>
+            <psic:node name="ACQ" description="New Function"/>
+         </psic:node>
+      </psic:node>
+   </psic:CBS>
+   <ps:plantSystems>
+      <ps:plantSystem ID="52" name="Electron Cyclotron Heating and CD System"
+                      createdAt="2015-01-20T09:55:45.578+01:00"
+                      modifiedAt="2015-01-20T09:55:45.578+01:00">
+         <ps:parts>
+            <ps:part name="520000-PCF-0001" description="" TTT="PCF"
+                     createdAt="2015-01-20T09:56:34.059+01:00"
+                     modifiedAt="2015-01-20T09:56:34.059+01:00"/>
+         </ps:parts>
+         <ps:signals/>
+         <ps:cubicles/>
+      </ps:plantSystem>
+   </ps:plantSystems>
+   <psic:subsystems>
+      <psic:subsystem name="EC" CBS="EC">
+         <psic:variables/>
+         <psic:plantSystemIandCs>
+            <psic:plantSystemIandC ID="EC-DAN" name="" createdAt="2015-01-20T09:56:11.137+01:00"
+                                   modifiedAt="2015-01-20T09:56:11.137+01:00">
+               <psic:plantControlSystem>
+                  <psic:fastController index="0" isRealTime="false" name="520000-PCF-0001" description="" TTT="PCF"
+                                       createdAt="2015-01-20T09:56:34.059+01:00"
+                                       modifiedAt="2015-01-20T09:56:34.059+01:00">
+                     <psic:networkConnection network="DAN">
+                        <psic:hostName>520000-PCF-0001-D1.codac.iter.org</psic:hostName>
+                        <psic:interface>eth0</psic:interface>
+                     </psic:networkConnection>
+                     <psic:networkConnection network="PON">
+                        <psic:hostName>520000-PCF-0001.codac.iter.org</psic:hostName>
+                        <psic:interface>eth0</psic:interface>
+                     </psic:networkConnection>
+                     <psic:networkConnection network="SDN">
+                        <psic:hostName>520000-PCF-0001-R1.codac.iter.org</psic:hostName>
+                        <psic:interface>eth0</psic:interface>
+                     </psic:networkConnection>
+                     <psic:networkConnection network="TCN">
+                        <psic:hostName>520000-PCF-0001-T1.codac.iter.org</psic:hostName>
+                        <psic:interface>eth1</psic:interface>
+                     </psic:networkConnection>
+                  </psic:fastController>
+               </psic:plantControlSystem>
+               <psic:PSH/>
+               <psic:variables>
+                  <psic:variable createdAt="2017-09-27T12:26:14.595+02:00"
+                                 modifiedAt="2017-09-27T12:26:44.058+02:00"
+                                 name="EC-DAN-ACQ:DUMMY-SECOND"
+                                 description="from MySecondDANProgram">
+                     <psic:direction>state</psic:direction>
+                     <psic:dataType>
+                        <psic:name>danFloat</psic:name>
+                        <psic:description>FLOAT</psic:description>
+                        <psic:size>0</psic:size>
+                     </psic:dataType>
+                     <units:Unit>
+                        <units:UnitName>Volt</units:UnitName>
+                        <units:UnitSymbol>V</units:UnitSymbol>
+                        <units:QuantityReference url="" name="Electrical potential difference, electromotive force (W/A)"/>
+                     </units:Unit>
+                     <psic:external>true</psic:external>
+                     <psic:implementsFunction>EC-DAN-ACQ</psic:implementsFunction>
+                     <psic:raisesAlarm>false</psic:raisesAlarm>
+                     <psic:storage>volatile</psic:storage>
+                     <psic:deployedOn>
+                        <psic:component type="PCF">520000-PCF-0001</psic:component>
+                     </psic:deployedOn>
+                     <psic:transmittedOn>DAN</psic:transmittedOn>
+                     <psic:presentOnScreens>true</psic:presentOnScreens>
+                     <psic:displayIndex>0</psic:displayIndex>
+                     <psic:DANAttributes>
+                        <psic:attribute name="streamType" description=" stream viewer type ">
+                           <psic:dataType>
+                              <psic:name>DBF_MENU</psic:name>
+                              <psic:composite>
+                                 <psic:elements>
+                                    <psic:value>RAW</psic:value>
+                                    <psic:value>DATA_D0</psic:value>
+                                    <psic:value>DATA_D1</psic:value>
+                                    <psic:value>DATA_D2</psic:value>
+                                    <psic:value>IMAGE</psic:value>
+                                 </psic:elements>
+                              </psic:composite>
+                           </psic:dataType>
+                           <psic:value>DATA_D0</psic:value>
+                           <psic:defaultValue>DAN-sample:1</psic:defaultValue>
+                        </psic:attribute>
+                     </psic:DANAttributes>
+                  </psic:variable>
+                  <psic:variable createdAt="2015-01-20T11:16:11.296+01:00"
+                                 modifiedAt="2017-09-25T12:29:01.927+02:00"
+                                 name="EC-DAN-ACQ:DUMMY-SIGNAL"
+                                 description="New DAN Variable">
+                     <psic:direction>state</psic:direction>
+                     <psic:dataType>
+                        <psic:name>danFloat</psic:name>
+                        <psic:description>FLOAT</psic:description>
+                        <psic:size>0</psic:size>
+                     </psic:dataType>
+                     <units:Unit>
+                        <units:UnitName>Volt</units:UnitName>
+                        <units:UnitSymbol>V</units:UnitSymbol>
+                        <units:QuantityReference url="" name="Electrical potential difference, electromotive force (W/A)"/>
+                     </units:Unit>
+                     <psic:external>true</psic:external>
+                     <psic:implementsFunction>EC-DAN-ACQ</psic:implementsFunction>
+                     <psic:raisesAlarm>false</psic:raisesAlarm>
+                     <psic:storage>volatile</psic:storage>
+                     <psic:deployedOn>
+                        <psic:component type="PCF">520000-PCF-0001</psic:component>
+                     </psic:deployedOn>
+                     <psic:transmittedOn>DAN</psic:transmittedOn>
+                     <psic:presentOnScreens>true</psic:presentOnScreens>
+                     <psic:displayIndex>1</psic:displayIndex>
+                     <psic:DANAttributes>
+                        <psic:attribute name="streamType" description=" stream viewer type ">
+                           <psic:dataType>
+                              <psic:name>DBF_MENU</psic:name>
+                              <psic:composite>
+                                 <psic:elements>
+                                    <psic:value>RAW</psic:value>
+                                    <psic:value>DATA_D0</psic:value>
+                                    <psic:value>DATA_D1</psic:value>
+                                    <psic:value>DATA_D2</psic:value>
+                                    <psic:value>IMAGE</psic:value>
+                                 </psic:elements>
+                              </psic:composite>
+                           </psic:dataType>
+                           <psic:value>DATA_D0</psic:value>
+                           <psic:defaultValue>DAN-sample:1</psic:defaultValue>
+                        </psic:attribute>
+                     </psic:DANAttributes>
+                  </psic:variable>
+               </psic:variables>
+               <psic:program name="MyFirstDANProgram" description="first program to test DAN"
+                             programmingLanguage="Cplusplus">
+                  <psic:DANAttributes>
+                     <psic:sources>
+                        <psic:source name="DummySrc">
+                           <psic:attribute description="the value in nanoseconds we have to add to initial timestamp to get correct time"
+                                           domain="DANSRC"
+                                           type="time_shift">
+                              <psic:dataType>
+                                 <psic:name>DBF_LONG</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>0</psic:value>
+                              <psic:defaultValue>0</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" debug param for chunk header size" domain="DANSRC"
+                                           type="srv_chunk_header_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>20</psic:value>
+                              <psic:defaultValue>20</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" indicates level of monitoring" domain="DANSRC"
+                                           type="prof_monitoring">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                              <psic:defaultValue>1</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" max. size of block in bytes" domain="DANSRC"
+                                           type="block_max_payload_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2000</psic:value>
+                              <psic:defaultValue>2000</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" max. transfer rate in kb/sec" domain="DANSRC"
+                                           type="max_transfer_rate">
+                              <psic:dataType>
+                                 <psic:name>DBF_LONG</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>100000</psic:value>
+                              <psic:defaultValue>100000</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute description=" debug param for chunk size" domain="DANSRC" type="srv_chunk_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>10000</psic:value>
+                              <psic:defaultValue>10000</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" constant we should multiply arriving differential timestamps to get correct time"
+                                           domain="DANSRC"
+                                           type="time_scale">
+                              <psic:dataType>
+                                 <psic:name>DBF_DOUBLE</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                              <psic:defaultValue>1</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" value of the time format" domain="DANSRC" type="time_format">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>UTC</psic:value>
+                                       <psic:value>TAI</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>UTC</psic:value>
+                              <psic:defaultValue>UTC</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" data model used for archive" domain="DANSRC" type="dataModel">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>DM_BLOCK2D_VAR</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>DM_BLOCK2D_VAR</psic:value>
+                              <psic:defaultValue>DM_BLOCK2D_VAR</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute domain="DANSRCVAR" type="EC-DAN-ACQ:DUMMY-SIGNAL">
+                              <psic:dataType>
+                                 <psic:name>enable</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                           </psic:attribute>
+                           <psic:attribute description=" value of the check policy" domain="DANSRC" type="check_policy">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>NO_CHECK</psic:value>
+                                       <psic:value>CHECK_AND_CANCEL</psic:value>
+                                       <psic:value>CHECK_AND_OVERWRITE</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>NO_CHECK</psic:value>
+                              <psic:defaultValue>NO_CHECK</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute description=" time step increase" domain="DANSRC" type="time_shift_step">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" debug param for chunk header size" domain="DANSRC"
+                                           type="srv_buffer_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" size of the buffer for source" domain="DANSRC" type="queue_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_DOUBLE</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1000</psic:value>
+                              <psic:defaultValue>1000</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                        </psic:source>
+                     </psic:sources>
+                     <psic:streamers>
+                        <psic:streamer name="DANSTREAMER0">
+                           <psic:attribute description=" loop delay in microsecond" domain="DANSTREAMER" type="loop_delay">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>10</psic:value>
+                              <psic:defaultValue>10</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" log level " domain="DANSTREAMER" type="logLevel">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" prof monitoring " domain="DANSTREAMER" type="profMonitoring">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" type of policy" domain="DANSTREAMER" type="policy">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>IF_FAIL_NEXT</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>IF_FAIL_NEXT</psic:value>
+                              <psic:defaultValue>IF_FAIL_NEXT</psic:defaultValue>
+                              <psic:scope>servers</psic:scope>
+                           </psic:attribute>
+                        </psic:streamer>
+                     </psic:streamers>
+                  </psic:DANAttributes>
+                  <psic:deployedOn>520000-PCF-0001</psic:deployedOn>
+               </psic:program>
+               <psic:program name="MySecondDANProgram" description="prova" programmingLanguage="Cplusplus">
+                  <psic:DANAttributes>
+                     <psic:sources>
+                        <psic:source name="srcSecond">
+                           <psic:attribute description=" debug param for chunk header size" domain="DANSRC"
+                                           type="srv_buffer_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" debug param for chunk size" domain="DANSRC" type="srv_chunk_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>10000</psic:value>
+                              <psic:defaultValue>10000</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description="the value in nanoseconds we have to add to initial timestamp to get correct time"
+                                           domain="DANSRC"
+                                           type="time_shift">
+                              <psic:dataType>
+                                 <psic:name>DBF_LONG</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>0</psic:value>
+                              <psic:defaultValue>0</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute domain="DANSRCVAR" type="EC-DAN-ACQ:DUMMY-SECOND">
+                              <psic:dataType>
+                                 <psic:name>enable</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                           </psic:attribute>
+                           <psic:attribute description=" data model used for archive" domain="DANSRC" type="dataModel">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>DM_BLOCK2D_VAR</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>DM_BLOCK2D_VAR</psic:value>
+                              <psic:defaultValue>DM_BLOCK2D_VAR</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute description=" max. transfer rate in kb/sec" domain="DANSRC"
+                                           type="max_transfer_rate">
+                              <psic:dataType>
+                                 <psic:name>DBF_LONG</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>100000</psic:value>
+                              <psic:defaultValue>100000</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute description=" indicates level of monitoring" domain="DANSRC"
+                                           type="prof_monitoring">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                              <psic:defaultValue>1</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" constant we should multiply arriving differential timestamps to get correct time"
+                                           domain="DANSRC"
+                                           type="time_scale">
+                              <psic:dataType>
+                                 <psic:name>DBF_DOUBLE</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1</psic:value>
+                              <psic:defaultValue>1</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" value of the time format" domain="DANSRC" type="time_format">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>UTC</psic:value>
+                                       <psic:value>TAI</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>UTC</psic:value>
+                              <psic:defaultValue>UTC</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" value of the check policy" domain="DANSRC" type="check_policy">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>NO_CHECK</psic:value>
+                                       <psic:value>CHECK_AND_CANCEL</psic:value>
+                                       <psic:value>CHECK_AND_OVERWRITE</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>NO_CHECK</psic:value>
+                              <psic:defaultValue>NO_CHECK</psic:defaultValue>
+                           </psic:attribute>
+                           <psic:attribute description=" time step increase" domain="DANSRC" type="time_shift_step">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" max. size of block in bytes" domain="DANSRC"
+                                           type="block_max_payload_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2000</psic:value>
+                              <psic:defaultValue>2000</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" size of the buffer for source" domain="DANSRC" type="queue_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_DOUBLE</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>1000</psic:value>
+                              <psic:defaultValue>1000</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" debug param for chunk header size" domain="DANSRC"
+                                           type="srv_chunk_header_size">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>20</psic:value>
+                              <psic:defaultValue>20</psic:defaultValue>
+                              <psic:scope>debug</psic:scope>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                        </psic:source>
+                     </psic:sources>
+                     <psic:streamers>
+                        <psic:streamer name="DANSTREAMER0">
+                           <psic:attribute description=" type of policy" domain="DANSTREAMER" type="policy">
+                              <psic:dataType>
+                                 <psic:name>DBF_MENU</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                                 <psic:composite>
+                                    <psic:elements>
+                                       <psic:value>IF_FAIL_NEXT</psic:value>
+                                    </psic:elements>
+                                 </psic:composite>
+                              </psic:dataType>
+                              <psic:value>IF_FAIL_NEXT</psic:value>
+                              <psic:defaultValue>IF_FAIL_NEXT</psic:defaultValue>
+                              <psic:scope>servers</psic:scope>
+                           </psic:attribute>
+                           <psic:attribute description=" prof monitoring " domain="DANSTREAMER" type="profMonitoring">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" loop delay in microsecond" domain="DANSTREAMER" type="loop_delay">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>10</psic:value>
+                              <psic:defaultValue>10</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                           <psic:attribute description=" log level " domain="DANSTREAMER" type="logLevel">
+                              <psic:dataType>
+                                 <psic:name>DBF_INTEGER</psic:name>
+                                 <psic:domain>DANFieldType</psic:domain>
+                              </psic:dataType>
+                              <psic:value>2</psic:value>
+                              <psic:defaultValue>2</psic:defaultValue>
+                              <psic:qualifier>ADVANCED</psic:qualifier>
+                           </psic:attribute>
+                        </psic:streamer>
+                     </psic:streamers>
+                  </psic:DANAttributes>
+                  <psic:deployedOn>520000-PCF-0001</psic:deployedOn>
+               </psic:program>
+            </psic:plantSystemIandC>
+         </psic:plantSystemIandCs>
+      </psic:subsystem>
+   </psic:subsystems>
+   <psic:templates/>
+   <psic:breakpointTables/>
+</psic:IandCProject>

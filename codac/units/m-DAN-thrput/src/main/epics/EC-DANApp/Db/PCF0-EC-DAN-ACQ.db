@@ -1,0 +1,19 @@
+record (bi,"EC-DAN-ACQ:GEN_ENABLE")
+{
+	field(DESC, "enable generation")
+	field(ONAM, "false")
+	field(OSV, "NO_ALARM")
+	field(ZNAM, "true")
+	field(ZSV, "NO_ALARM")
+}
+
+record (longin,"EC-DAN-ACQ:GEN_FREQ")
+{
+	field(DESC, "Packet generation Freq")
+}
+
+record (longin,"EC-DAN-ACQ:GEN_PKTSIZE")
+{
+	field(DESC, "packet size")
+}
+

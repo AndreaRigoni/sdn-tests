@@ -1,0 +1,9 @@
+record (ao,"EC-DAN-F000:ST1")
+{
+}
+
+record (ai,"EC-DAN-F000:T1")
+{
+	field(DESC, "New Variable")
+}
+

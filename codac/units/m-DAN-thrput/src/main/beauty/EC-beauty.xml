@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+  Archive Configuration
+  Root: EngineConfig
+  CODAC-VERSION: 5.4.0
+  WARNING: This is an automatically generated file. PLEASE DO NOT MODIFY.
+-->
+
+ <engineconfig >
+     <group >
+         <name >EC-DAN-SYSM</name>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-BTIME</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-CCSV</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-CPUUTL</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-DISKUTL</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-EPICSV</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-HOSTNAME</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-MEMUTL</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-NRBPS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-NSBPS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-SYSHLTS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-TDEVICE</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-TOFFSET</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0-TSTATUS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0CORE-DBDLC</name>
+
+             <period >10.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0CORE-DBRECC</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0CORE-IOCHLTS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0CORE-STTOD</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0SYSM-DBDLC</name>
+
+             <period >10.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0SYSM-DBRECC</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0SYSM-IOCHLTS</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+
+         <channel >
+             <name >EC-DAN-SYSM:F0SYSM-STTOD</name>
+
+             <period >1.0</period>
+
+             <monitor >0.0</monitor>
+</channel>
+</group>
+</engineconfig>

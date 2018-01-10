@@ -1,0 +1,17 @@
+########################################
+# Program-specific environment variables 
+########################################
+
+# INFO - This file is part of the I&C project. It can be modified without risk of being overwritten.
+# INFO - This file is sourced when invoking 'mvn run -Dprog=<prog_name>' to allow for setting development-specific environment variables.
+
+# Override SDN interface name for test purposes
+# Default: lo
+# Project: Target host <iface_name> in SDD database
+#SDN_INTERFACE_NAME=lo
+
+# INFO - This file can be further extended with anything specific required by the program.
+
+#LOG_FILE_ENABLE=false
+#LOG_FILTER_LEVEL=info
+#LOG_FWD_MODE=asyn

@@ -1,0 +1,12 @@
+############################################
+# I&C project-specific environment variables 
+############################################
+
+# INFO - This file is part of the I&C project. It can be modified without risk of being overwritten.
+# INFO - This file is sourced when invoking 'mvn run' to allow for setting development-specific environment variables.
+
+# INFO - This file can be further extended with anything specific required by the I&C project.
+
+#LOG_FILE_ENABLE=false
+#LOG_FILTER_LEVEL=info
+#LOG_FWD_MODE=asyn

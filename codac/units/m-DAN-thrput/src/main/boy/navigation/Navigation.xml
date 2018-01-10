@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+  BOY Files Navigation
+  CODAC-VERSION: 5.4.0
+  WARNING: This is an SDD generated file. Contact codac-support for any query.
+-->
+
+ <navigation xmlns:xi="http://www.w3.org/2001/XInclude" >
+     <CBS name="ITER" description="ITER Global Supervision" enabled="true" opi_file="./../ITER.opi LEVEL=ITER" deprecated="false" alarm_root="/CODAC_AlarmHandler" xmlns:xi="http://www.w3.org/2001/XInclude" >
+         <xi:include href="Navigation_EC.xml" >
+             <xi:fallback ></xi:fallback>
+</xi:include>
+</CBS>
+</navigation>

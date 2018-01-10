@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+  BOY Files Navigation
+  CODAC-VERSION: 5.4.0
+  WARNING: This is an SDD generated file. Contact codac-support for any query.
+-->
+
+ <CBS name="DAN" description="" enabled="true" opi_file="./../sdd/quad_hd/EC-DAN.opi LEVEL=ITER-EC-DAN" deprecated="false" alarm_root="/CODAC_AlarmHandler/EC/EC-DAN" xmlns:xi="http://www.w3.org/2001/XInclude" >
+     <xi:include href="Navigation_EC-DAN-ACQ.xml" >
+         <xi:fallback ></xi:fallback>
+</xi:include>
+
+     <xi:include href="Navigation_EC-DAN-SYSM.xml" >
+         <xi:fallback ></xi:fallback>
+</xi:include>
+</CBS>
