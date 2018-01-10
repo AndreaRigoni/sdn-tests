@@ -83,8 +83,8 @@ int main(int argc, char **argv)
   PV<double> pv(name);
 //  PV<int> test("");
 
-  std::cout << "status: " << pv.status() << std::endl;
-  std::cout << "data: " << pv << std::endl;
+//  std::cout << "status: " << pv.status() << std::endl;
+//  std::cout << "data: " << pv << std::endl;
 
   pv = pv + 1;
   std::cout << "data: " << pv << std::endl;
