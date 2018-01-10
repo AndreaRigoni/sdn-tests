@@ -29,9 +29,10 @@ m_maven_iter_plugin_SVN_DEP = m-maven-iter-settings \
 m_dan_common_SVN_DEP = m-codac-unit-api \
 					   m-maven-iter-plugin
 
-m_DAN_sample_SNV_DEP = m-maven-iter-settings \
+m_DAN_sample_SVN_DEP = m-maven-iter-settings \
 					   m-maven-iter-plugin
 
+VPATH = .
 
 $(IC_UNITS):
 	@ $(MAKE) svn_co NAME=$@ SVN_DIR=$(ICDEV_DIR)
@@ -75,7 +76,7 @@ $(MAVEN_HOME):
 
 
 mvn-%-dep: ##@mvn perform install on all deps only
-	@ $(foreach x,$(SVN_DEP),$(MAKE) $@ NAME=$x;)
+	@ $(foreach x,$(SVN_DEP),$(MAKE) $(subst -dep,-all,$@) NAME=$x;)
 
 mvn-%-all: ##@mvn perform install on all deps
 	@ $(foreach x,$(SVN_DEP),$(MAKE) $@ NAME=$x;) \
