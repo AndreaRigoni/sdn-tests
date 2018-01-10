@@ -57,8 +57,8 @@ svn_%: $(SVN_DEP)
 	  $(info |   unit:   $(NAME))
 	  $(info |   branch: $(SVN_BRA))
 	  $(info |   deps:   $(SVN_DEP))
-	@ svn $(subst svn_,,$@) $(SVN_URL)/$(SVN_DIR)/$(NAME)/$(SVN_BRA) $(NAME); \
-	  ln -s $(NAME) $(srcdir)/$(NAME)
+	@ svn $(subst svn_,,$@) $(SVN_URL)/$(SVN_DIR)/$(NAME)/$(SVN_BRA) $(srcdir)/$(NAME); \
+	  ln -s $(srcdir)/$(NAME) $(NAME)
 
 
 ic-dialog: ##@svnpub manually download icdev units

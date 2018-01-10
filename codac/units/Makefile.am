@@ -19,8 +19,6 @@ DEV_UNITS = \
 			m-codac-unit-api \
 			m-maven-iter-plugin
 
-
-
 m_maven_iter_settings_SVN_DEP =
 
 m_codac_unit_api_SVN_DEP = m-maven-iter-settings
