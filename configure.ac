@@ -9,7 +9,7 @@ dnl AC_CONFIG_SRCDIR([...])
 AC_CANONICAL_TARGET
 
 m4_version_prereq([2.69],[],
-[m4_include([m4/m4_prereq_2.69.m4])])
+[m4_include([conf/m4/m4_prereq_2.69.m4])])
 
 
 dnl AUTOMAKE ///////////////////////////////////////////////////////////////////
