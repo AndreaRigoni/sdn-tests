@@ -104,6 +104,8 @@ AX_KCONFIG_VAR_ENABLE([ENABLE_CUSTOM_TOOLCHAIN],["Enable external toolchain"])
 AX_KCONFIG_CHOICE([TOOLCHAIN_RETRIEVE],
 		  [TOOLCHAIN_RETRIEVE_TAR],["tar"],
 		  [TOOLCHAIN_RETRIEVE_DIR],["dir"])
+AM_CONDITIONAL([TOOLCHAIN_RETRIEVE_TAR],[ test x${TOOLCHAIN_RETRIEVE_TAR}=xyes])
+AM_CONDITIONAL([TOOLCHAIN_RETRIEVE_DIR],[ test x${TOOLCHAIN_RETRIEVE_DIR}=xyes])
 
 AX_KCONFIG_VAR_WITH([TOOLCHAIN_TAR],["url path for Linaro toolchain binaries"])
 AC_SUBST([TOOLCHAIN_TAR])
@@ -126,11 +128,6 @@ AC_SUBST([CROSS_COMPILE])
 m4_sinclude(conf/kscripts/iter_codac.ac)
 
 
-dnl # //////////////////////////////////////////////////////////////////////////// #
-dnl # // NODEJS  ///////////////////////////////////////////////////////////////// #
-dnl # //////////////////////////////////////////////////////////////////////////// #
-
-AC_CONFIG_SUBDIRS([node])
 
 
 
@@ -143,6 +140,7 @@ AC_CONFIG_FILES( Makefile
 				 codac/units/Makefile
 				 codac/tmp/Makefile
 				 codac/docker/Makefile
+				 node/Makefile
 				 .gitignore )
 AC_OUTPUT
 

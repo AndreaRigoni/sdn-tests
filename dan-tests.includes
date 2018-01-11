@@ -99,3 +99,4 @@ build/codac/units/m-maven-iandc-plugin
 build/codac/units/m-epics/base-3.15.5/src/ca/client
 build/codac/units/m-DAN-thrput/src/main/c++/MyFirstDANProgram
 build/codac/units/m-DAN-thrput/src/main/c++/pv_test
+codac/units/m-DAN-thrput/src/main/c++/pv_test
