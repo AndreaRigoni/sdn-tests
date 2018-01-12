@@ -7,6 +7,8 @@ LIBRARY_DIRS =
 
 DAN_DAQ_DIR = $(top_srcdir)/codac/units/
 
+# Already set from docker env in /etc/profile (bash -l)
+#
 # CODAC_ROOT          ?= /opt/codac-5.4
 # EPICS_BASE          ?= /opt/codac-5.4/epics
 # SDN_TOPIC_DIRECTORY ?= /opt/codac-5.4/apps/include
@@ -26,13 +28,11 @@ LDLIBS=-L$(CODAC_ROOT)/lib \
 		 $(foreach libs,$(_LIBS),-l$(libs))
 
 
-
 AM_CPPFLAGS = $(foreach inc,$(INCLUDE_DIRS),-I$(inc))
 AM_LDFLAGS  = $(LDLIBS)
 
 bin_PROGRAMS = monitor
 monitor_SOURCES = monitor.cpp
-
 
 _dump = $(if $($1),$(info $1=$($1)),$(info $1 <empty>))
 env-dump: ##@codac dump env variables used for build codac components

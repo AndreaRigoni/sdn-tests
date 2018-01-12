@@ -3,7 +3,10 @@ dnl Process this file with autoconf to produce a configure script.
 dnl AUTOCONF ///////////////////////////////////////////////////////////////////
 dnl AC_PREREQ([2.63])
 AC_INIT([autoconf-bootstrap],[0.1],[andrea.rgn@gmail.com])
-dnl AC_CONFIG_MACRO_DIRS([m4])
+
+AC_CONFIG_MACRO_DIRS([conf/m4])
+dnl ACLOCAL_AMFLAGS=-I conf/m4
+
 AC_CONFIG_AUX_DIR([conf])
 dnl AC_CONFIG_SRCDIR([...])
 AC_CANONICAL_TARGET
@@ -53,12 +56,8 @@ AC_SUBST([DOCKER_PS1])
 
 AX_DOCKER_BUILD([bootstrap])
 
-
 dnl AX_TARGET_SELFHELP /////////////////////////////////////////////////////////
 AX_TARGET_SELFHELP
-
-
-
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -79,66 +78,30 @@ AC_CHECK_PROGS([UNIQ],[uniq])
 AC_CHECK_PROGS([WC],[wc])
 
 
-# //////////////////////////////////////////////////////////////////////////// #
-# //  BUILD COMMON  ////////////////////////////////////////////////////////// #
-# //////////////////////////////////////////////////////////////////////////// #
+## /////////////////////////////////////////////////////////////////////////////
+## //  KSCRIPTS  ///////////////////////////////////////////////////////////////
+## /////////////////////////////////////////////////////////////////////////////
 
-AX_KCONFIG_VAR_WITH([DOWNLOAD_DIR],["Default download directory path"])
-AC_SUBST([DOWNLOAD_DIR])
-AX_GITIGNORE_ADD([${DOWNLOAD_DIR}])
+## BUILD_COMMON ##
+m4_sinclude(conf/kscripts/build_common.ac)
 
-AX_KCONFIG_VAR_WITH([MAKE_PROCESS],
-		    ["Number of parallel process (aka -j option, 0=auto)"])
-AS_VAR_IF([MAKE_PROCESS],[0],
-	  [AS_VAR_SET([MAKE_PROCESS],[$(grep -c ^processor /proc/cpuinfo)])])
-AC_MSG_NOTICE([build make process -j${MAKE_PROCESS}])
-AC_SUBST([MAKE_PROCESS])
+## TOOLCHAIN ##
+m4_sinclude(conf/kscripts/toolchain.ac)
 
-
-# //////////////////////////////////////////////////////////////////////////// #
-# //  TOOLCHAIN  ///////////////////////////////////////////////////////////// #
-# //////////////////////////////////////////////////////////////////////////// #
-
-AX_KCONFIG_VAR_ENABLE([ENABLE_CUSTOM_TOOLCHAIN],["Enable external toolchain"])
-
-AX_KCONFIG_CHOICE([TOOLCHAIN_RETRIEVE],
-		  [TOOLCHAIN_RETRIEVE_TAR],["tar"],
-		  [TOOLCHAIN_RETRIEVE_DIR],["dir"])
-AM_CONDITIONAL([TOOLCHAIN_RETRIEVE_TAR],[ test x${TOOLCHAIN_RETRIEVE_TAR}=xyes])
-AM_CONDITIONAL([TOOLCHAIN_RETRIEVE_DIR],[ test x${TOOLCHAIN_RETRIEVE_DIR}=xyes])
-
-AX_KCONFIG_VAR_WITH([TOOLCHAIN_TAR],["url path for Linaro toolchain binaries"])
-AC_SUBST([TOOLCHAIN_TAR])
-
-AX_KCONFIG_VAR_WITH([TOOLCHAIN_DIR],["Set toolchain base dir"])
-AC_SUBST([TOOLCHAIN_DIR])
-AX_GITIGNORE_ADD([${TOOLCHAIN_DIR}])
-
-AX_KCONFIG_VAR_WITH([CROSS_COMPILE],["Set crosscompile command"])
-AC_SUBST([CROSS_COMPILE])
-
-
-
-
-
-# //////////////////////////////////////////////////////////////////////////// #
-# //  CODAC    /////////////////////////////////////////////////////////////// #
-# //////////////////////////////////////////////////////////////////////////// #
-
+## CODAC ##
 m4_sinclude(conf/kscripts/iter_codac.ac)
 
+## QT ##
+m4_sinclude(conf/kscripts/qtdesktop.ac)
 
-
-
-
-# // GIT IGNORE // #
+## // GIT IGNORE // ##
 AX_GITIGNORE_SUBST
-
 
 AC_CONFIG_FILES( Makefile
 				 codac/Makefile
 				 codac/units/Makefile
 				 codac/tmp/Makefile
+				 codac/tmp/Qt/Makefile
 				 codac/docker/Makefile
 				 node/Makefile
 				 .gitignore )
@@ -146,12 +109,4 @@ AC_OUTPUT
 
 
 
-dnl # //////////////////////////////////////////////////////////////////////////
-dnl # //  UTILS   //////////////////////////////////////////////////////////////
-dnl # //////////////////////////////////////////////////////////////////////////
-
-
-# // remove this when ax_config_subdirs is added to repository
-AC_DEFUN([AX_CONFIG_SCRIPTS],
-[m4_map_args_w([$1],[m4_sinclude(conf/kscripts/],[)])])
 
