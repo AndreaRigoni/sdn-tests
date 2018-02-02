@@ -1,0 +1,51 @@
+INST     @iocdir              IOC long string      EC-DAN-SYSM:F0SYSM-IOCDIR 
+INST     @tcnd_status         sysmon               EC-DAN-SYSM:F0-TSTATUS 
+INST     @core_temp_arr       picmg                EC-DAN-SYSM:F0-CTEMPARR 
+INST     @proc_list           sysmon               EC-DAN-SYSM:F0-PROCLST 
+INST     @proc_sts            sysmon               EC-DAN-SYSM:F0-PROCSTS 
+INST     @core_temp_min       picmg                EC-DAN-SYSM:F0-CTEMPMIN 
+INST     @core_temp_max       picmg                EC-DAN-SYSM:F0-CTEMPMAX 
+INST     @core_temp_avg       picmg                EC-DAN-SYSM:F0-CTEMPAVG 
+INST     @load_1min:localhost sysmon               EC-DAN-SYSM:F0-CAV1  
+INST     @cpu_util:localhost  sysmon               EC-DAN-SYSM:F0-CPUUTL 
+INST     @disk_free:/         sysmon               EC-DAN-SYSM:F0-DISKFREE 
+INST     @disk_total:/        sysmon               EC-DAN-SYSM:F0-DISKMAX 
+INST     @disk_util:/         sysmon               EC-DAN-SYSM:F0-DISKUTL 
+INST     @fd_util:localhost   sysmon               EC-DAN-SYSM:F0-FDUTL 
+INST     @mem_free:localhost  sysmon               EC-DAN-SYSM:F0-MEMFREE 
+INST     @mem_max:localhost   sysmon               EC-DAN-SYSM:F0-MEMMAX 
+INST     @mem_util:localhost  sysmon               EC-DAN-SYSM:F0-MEMUTL 
+INST     @net_recv_bps:eth0   sysmon               EC-DAN-SYSM:F0-NRBPS 
+INST     @net_send_bps:eth0   sysmon               EC-DAN-SYSM:F0-NSBPS 
+INST     @cfa633_temp:0       picmg                EC-DAN-SYSM:F0-TEMP1 
+INST     @cfa633_temp:1       picmg                EC-DAN-SYSM:F0-TEMP2 
+INST     @cfa633_temp:2       picmg                EC-DAN-SYSM:F0-TEMP3 
+INST     @cfa633_fan:0        picmg                EC-DAN-SYSM:F0-FANSPEED1 
+INST     @cfa633_fan:1        picmg                EC-DAN-SYSM:F0-FANSPEED2 
+INST     @cfa633_fan:2        picmg                EC-DAN-SYSM:F0-FANSPEED3 
+INST     @tcnd_uptime         sysmon               EC-DAN-SYSM:F0-TUPTIME 
+INST     @tcnd_offset:OFFSET  sysmon               EC-DAN-SYSM:F0-TOFFSET 
+INST     @tcnd_offset:MEANOFF sysmon               EC-DAN-SYSM:F0-TMEANOFF 
+INST     @tcnd_offset:STDOFF  sysmon               EC-DAN-SYSM:F0-TSTDOFF 
+INST     @tcnd_offset:MINOFF  sysmon               EC-DAN-SYSM:F0-TMINOFF 
+INST     @tcnd_offset:MAXOFF  sysmon               EC-DAN-SYSM:F0-TMAXOFF 
+INST     @records             IOC stats            EC-DAN-SYSM:F0SYSM-DBRECC 
+INST     @ioc_cpuload         IOC stats            EC-DAN-SYSM:F0SYSM-CPUUTL 
+INST     @utilmem             IOC stats            EC-DAN-SYSM:F0SYSM-MEMUTL 
+INST     @utilfd              IOC stats            EC-DAN-SYSM:F0SYSM-FDUTL 
+INST     @ca_clients          IOC stats            EC-DAN-SYSM:F0SYSM-CACLNTC 
+INST     @ca_connections      IOC stats            EC-DAN-SYSM:F0SYSM-CAPVC 
+INST     @boot_time           sysmon               EC-DAN-SYSM:F0-BTIME 
+INST     @env:CODAC_VERSION   sysmon               EC-DAN-SYSM:F0-CCSV  
+INST     @version:EPICSVERSION sysmon               EC-DAN-SYSM:F0-EPICSV 
+INST     @env:HOSTNAME        sysmon               EC-DAN-SYSM:F0-HOSTNAME 
+INST     @ip_addr:eth0        sysmon               EC-DAN-SYSM:F0-IPADDR 
+INST     @version:KERNELVERS  sysmon               EC-DAN-SYSM:F0-KERNELV 
+INST     @version:OSRELEASE   sysmon               EC-DAN-SYSM:F0-OSV   
+INST     @curr_time           sysmon               EC-DAN-SYSM:F0-TIME  
+INST     @tcnd_version        sysmon               EC-DAN-SYSM:F0-TVERSION 
+INST     @tcnd_device         sysmon               EC-DAN-SYSM:F0-TDEVICE 
+INST     @EPICS_CA_SERVER_PORT IOC epics var        EC-DAN-SYSM:F0SYSM-SVPORT 
+INST     @EPICS_CA_CONN_TMO   IOC epics var        EC-DAN-SYSM:F0SYSM-CONTMO 
+INST     @EPICS_CA_BEACON_PERIOD IOC epics var        EC-DAN-SYSM:F0SYSM-BECTME 
+INST     @%Y-%m-%d %H:%M:%S   Soft Timestamp       EC-DAN-SYSM:F0SYSM-STTOD 

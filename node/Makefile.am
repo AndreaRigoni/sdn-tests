@@ -1,30 +1,72 @@
 include $(top_srcdir)/Common.mk
 
-.PHONY: testserver
-testserver: testserver.js
+NODOCKERBUILD += %
+
+RDIR      ?= $(srcdir)
+RDIR_NAME ?= $(RDIR)/$(NAME)
+
+
+st-%: NAME =
+st-%: RDIR = $(srcdir)
+
+st_testserver_DEPS = ffi
+
+st-testserver: ##@standalone testserver.js
+st-testserver: testserver.js
 	node $<
 
-.PHONY: app
-app: app.js
+st-app: ##@standalone app.js
+st-app: app.js
 	node $<
 
 
-NAME ?= t1
-RDIR ?= $(srcdir)/react
-RDIR_NAME := $(RDIR)/$(NAME)
+
+## REACT PROJECTS ##
+
+NAME ?= r1
+r1_DEPS = rc-menu react-grid-layout create-react-class webpack node-json-rpc
+# r1_DEPS = rc-menu react-grid-layout create-react-class webpack \
+#           react-addons react-box-layout
+
 
 
 $(RDIR):
 	@ $(MKDIR_P) $@
 
-$(RDIR_NAME): $(RDIR)
+$(RDIR)/react/$(NAME): $(RDIR)
 	@ create-react-app $@
 
-react-create: ##@react create react app
-react-create:
+
+rc-%: RDIR = $(srcdir)/react
+
+rc-create: ##@react create react app
+rc-create:
 	@ $(MAKE) $(RDIR_NAME)
 
-react-start: ##@react start app
-react-stop: ##@react stop app
-react-%: $(RDIR_NAME)
-	@ cd $(RDIR_NAME); npm $(subst react-,,$@)
+rc-start: ##@react start app $NAME
+rc-start: deps npm-start
+
+rc-stop: ##@react stop app $NAME
+rc-stop: npm-start
+
+
+
+## NPM COMMANDS ##
+
+npm-start: ##@npm start app
+npm-stop:  ##@npm stop app
+npm-%:
+	@ cd $(RDIR_NAME); npm $(subst npm-,,$@) $(NPM_ARGS)
+
+
+DEPS = $($(subst -,_,$(NAME))_DEPS)
+$(addprefix $(RDIR_NAME)/node_modules/,$(DEPS)):
+	@ $(info install: $@) \
+	  cd $(RDIR_NAME); npm install $(notdir $@)
+
+deps:
+	@ $(MAKE) $(AM_MAKEFLAGS) $(addprefix $(RDIR_NAME)/node_modules/,$(DEPS)) \
+	  RDIR_NAME=$(RDIR_NAME)
+
+clean:
+	@ $(info not implemented yet)

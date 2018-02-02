@@ -44,8 +44,25 @@ $(DEV_UNITS):
 download-all: ##@svnpub perform svn checkout on all deps
 	@ $(foreach x,$(SVN_DEP),$(MAKE) $x;)
 
-
 all: $(NAME) mvn-compile
+
+
+list: ##@ext list defined ic units
+list : _item = $(info | $1: ) $(foreach x,$($1),$(info |  - $x))
+list:
+	@ \
+	$(info ,-----------------------------------------------------------------) \
+	$(info | IC units defined ) \
+	$(info |) \
+	$(call _item,IC_UNITS) \
+	$(info |) \
+	$(call _item,DEV_UNITS) \
+	$(info |) \
+	$(info | CURRENT: $(NAME)) \
+	$(info |) \
+	$(info `-----------------------------------------------------------------) :
+
+
 
 ## ////////////////////////////////////////////////////////////////////////// ##
 ## /// MAVEN //////////////////////////////////////////////////////////////// ##
@@ -95,6 +112,8 @@ mvn-%: $(NAME) $(MAVEN_HOME)
 ## ////////////////////////////////////////////////////////////////////////// ##
 ## /// DAN API ////////////////////////////////////////////////////////////// ##
 ## ////////////////////////////////////////////////////////////////////////// ##
+
+
 
 CU_SETTINGS_DIR ?= $(NAME)/src/main/controlunitsettings
 DAN_APITOOL_BIN ?= /opt/codac/bin/danApiTool

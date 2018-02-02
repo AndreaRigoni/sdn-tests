@@ -101,3 +101,17 @@ build/codac/units/m-DAN-thrput/src/main/c++/MyFirstDANProgram
 build/codac/units/m-DAN-thrput/src/main/c++/pv_test
 codac/units/m-DAN-thrput/src/main/c++/pv_test
 codac/tmp/Qt
+
+/home/andrea/devel/codac/svnpub/codac/dev/units/m-dan-daq/trunk/src/main/c/include/
+build/codac/units/m-dan-common/src/test/c/stream_dummy_1D
+build/codac/units/m-dan-common/src/test/c
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-common/src/main/c/include
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-common/src/test/c/include
+build/codac/units/m-dan-common/src/test/c/stream_dummy_make
+build/codac/units/m-dan-common/src/test/c/stream_dummy_0D
+
+/home/andrea/tmp/codac/epics-base/include/
+node/jsonrpc-c
+node/jsonrpc-c/src
+node/jsonrpc-c/include
+node/react/r1

@@ -1,0 +1,11 @@
+INST     @iocdir              IOC long string      EC-DAN-SYSM:F0CORE-IOCDIR 
+INST     @records             IOC stats            EC-DAN-SYSM:F0CORE-DBRECC 
+INST     @ioc_cpuload         IOC stats            EC-DAN-SYSM:F0CORE-CPUUTL 
+INST     @utilmem             IOC stats            EC-DAN-SYSM:F0CORE-MEMUTL 
+INST     @utilfd              IOC stats            EC-DAN-SYSM:F0CORE-FDUTL 
+INST     @ca_clients          IOC stats            EC-DAN-SYSM:F0CORE-CACLNTC 
+INST     @ca_connections      IOC stats            EC-DAN-SYSM:F0CORE-CAPVC 
+INST     @EPICS_CA_SERVER_PORT IOC epics var        EC-DAN-SYSM:F0CORE-SVPORT 
+INST     @EPICS_CA_CONN_TMO   IOC epics var        EC-DAN-SYSM:F0CORE-CONTMO 
+INST     @EPICS_CA_BEACON_PERIOD IOC epics var        EC-DAN-SYSM:F0CORE-BECTME 
+INST     @%Y-%m-%d %H:%M:%S   Soft Timestamp       EC-DAN-SYSM:F0CORE-STTOD 

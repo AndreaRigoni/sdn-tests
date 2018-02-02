@@ -4,12 +4,8 @@
 #include <cadef.h>
 #include <exception>
 
-
-
 #define DEFAULT_CA_PRIORITY 0  /* Default CA priority */
 #define DEFAULT_TIMEOUT 1.0     /* Default CA timeout */
-
-
 
 class CAContext {
     int status;

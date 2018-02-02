@@ -62,10 +62,10 @@ svn_%: $(SVN_DEP)
 
 
 ic-dialog: ##@svnpub manually download icdev units
-ic-dialog: dialog_svnpub_download.sh
+ic-dialog: $(srcdir)/dialog_svnpub_download.sh
 	@ . $< $(SVN_URL) $(DEV_DIR) $(SVN_BRA)
 
 
 dev-dialog: ##@svnpub manually download devel units
-dev-dialog: dialog_svnpub_download.sh
+dev-dialog: $(srcdir)/dialog_svnpub_download.sh
 	@ . $< $(SVN_URL) $(DEV_DIR) $(SVN_BRA)

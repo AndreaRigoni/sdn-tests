@@ -97,6 +97,9 @@ m4_sinclude(conf/kscripts/qtdesktop.ac)
 ## // GIT IGNORE // ##
 AX_GITIGNORE_SUBST
 
+
+AC_CONFIG_SUBDIRS( node/jsonrpc-c )
+
 AC_CONFIG_FILES( Makefile
 				 codac/Makefile
 				 codac/units/Makefile
