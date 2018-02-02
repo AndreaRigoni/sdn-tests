@@ -13,7 +13,7 @@
  <source name="DummySrc" >
   <itemDanType >danFloat</itemDanType>
   <checkPolicy >NO_CHECK</checkPolicy>
-  <maxTransferRate >100000</maxTransferRate>
+  <maxTransferRate >${DAN_TESTS_TRATE}</maxTransferRate>
   <streamType >DATA_D0</streamType>
   <dataModel >DM_BLOCK2D_VAR</dataModel>
 
@@ -23,7 +23,7 @@
    <timeFormat >UTC</timeFormat>
    <debug >
 	<srvChunkHeaderSize >20</srvChunkHeaderSize>
-	<srvChunkSize >10000</srvChunkSize>
+	<srvChunkSize >${DAN_TESTS_CSIZE}</srvChunkSize>
 	<srvBufferSize >2</srvBufferSize>
    </debug>
   </advancedSource>
@@ -39,10 +39,9 @@
    <channel number="0" pvName="EC-DAN-ACQ:DUMMY-SIGNAL"
 					   label="EC-DAN-ACQ:DUMMY-SIGNAL"
 					   status="ENABLE" >
-   <calibration sourceUnit="V"
-				calibratedUnit=""
-				calibrationType="raw" >
-   </calibration>
+	 <calibration sourceUnit="V"
+				  calibratedUnit=""
+				  calibrationType="raw" />
    </channel>
   </channelsInfo>
  </source>
