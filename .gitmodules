@@ -10,6 +10,3 @@
 [submodule "node/node-json-rpc"]
 	path = node/node-json-rpc
 	url = https://github.com/andrearigoni/node-json-rpc
-[submodule "node/jsonrpc-c"]
-	path = node/jsonrpc-c
-	url = https://github.com/andrearigoni/jsonrpc-c

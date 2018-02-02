@@ -4,7 +4,7 @@ dnl AUTOCONF ///////////////////////////////////////////////////////////////////
 dnl AC_PREREQ([2.63])
 AC_INIT([autoconf-bootstrap],[0.1],[andrea.rgn@gmail.com])
 
-AC_CONFIG_MACRO_DIRS([conf/m4])
+AC_CONFIG_MACRO_DIR([conf/m4])
 dnl ACLOCAL_AMFLAGS=-I conf/m4
 
 AC_CONFIG_AUX_DIR([conf])
@@ -77,6 +77,16 @@ AC_CHECK_PROGS([TAR],[gtar tar])
 AC_CHECK_PROGS([UNIQ],[uniq])
 AC_CHECK_PROGS([WC],[wc])
 
+AC_PROG_LEX
+AC_PROG_YACC
+
+
+# needed for sh_envsubst
+AC_CHECK_PROGS([PERL],[perl])
+
+## LIBTOOL
+# LT_INIT()
+
 
 ## /////////////////////////////////////////////////////////////////////////////
 ## //  KSCRIPTS  ///////////////////////////////////////////////////////////////
@@ -94,11 +104,36 @@ m4_sinclude(conf/kscripts/iter_codac.ac)
 ## QT ##
 m4_sinclude(conf/kscripts/qtdesktop.ac)
 
+## NODEJS ##
+m4_sinclude(conf/kscripts/nodejs.ac)
+
+## DOXYGEN ##
+m4_sinclude(conf/autoconf-doxygen/doxygen.ac)
+
+## EXT_LIBJIT ##
+m4_sinclude(conf/kscripts/ext_libjit.ac)
+
+## EXT_LLVM ##
+m4_sinclude(conf/kscripts/ext_llvm.ac)
+
+## EXT_CCSTICKERS ##
+m4_sinclude(conf/kscripts/ext_ccStickers.ac)
+
+## EXT_JSONRPCC ##
+m4_sinclude(conf/kscripts/ext_jsonrpcc.ac)
+
+## EXT ##
+AX_KCONFIG_MODULES([EXT],
+		  [libjit],[libjit external sources],
+		  [llvm],[llvm external sources],
+		  [ccStickers],[ccStickers external sources],
+		  [jsonrpcc],[jsonrpcc external sources]
+		  )
+AC_SUBST([EXT_MODULES])
+
 ## // GIT IGNORE // ##
+AX_GITIGNORE_ADD_PATH([${builddir}])
 AX_GITIGNORE_SUBST
-
-
-AC_CONFIG_SUBDIRS( node/jsonrpc-c )
 
 AC_CONFIG_FILES( Makefile
 				 codac/Makefile
@@ -106,10 +141,8 @@ AC_CONFIG_FILES( Makefile
 				 codac/tmp/Makefile
 				 codac/tmp/Qt/Makefile
 				 codac/docker/Makefile
+				 ext/Makefile
 				 node/Makefile
 				 .gitignore )
 AC_OUTPUT
-
-
-
 

@@ -115,3 +115,5 @@ node/jsonrpc-c
 node/jsonrpc-c/src
 node/jsonrpc-c/include
 node/react/r1
+build/ext/ccStickers
+build/ext/ccStickers/src

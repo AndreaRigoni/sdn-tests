@@ -1,0 +1,75 @@
+
+# //////////////////////////////////////////////////////////////////////////////
+# //  DOXYGEN  /////////////////////////////////////////////////////////////////
+# //////////////////////////////////////////////////////////////////////////////
+
+menuconfig   ENABLE_DOXYGEN
+ bool "ENABLE_DOXYGEN"
+ ---help---
+   help on ENABLE_DOXYGEN
+
+if ENABLE_DOXYGEN
+
+config DX_TITLE
+  string "Doxy project title"
+  default "Code Documentation"
+  --- help ---
+	help on DX_TITLE
+
+config DOXYGEN_BINARY
+  string "DOXYGEN_BINARY selection"
+  default "/usr/sbin/doxygen"
+  --- help ---
+	help on DOXYGEN_BINARY
+
+menu DOXYGEN_MODULES
+	config DOXYGEN_HTML
+	 bool "Enable html output feature"
+	 default y
+	config DOXYGEN_PDF
+	 bool "Enable pdf output feature"
+	 default y
+	config DOXYGEN_MAN
+	 bool "Enable man output feature"
+	 default n
+	config DOXYGEN_DOT
+	 bool "Enable dot output feature"
+	 default n
+	config DOXYGEN_CHM
+	 bool "Enable chm output feature"
+	 default n
+	config DOXYGEN_CHI
+	 bool "Enable chi output feature"
+	 default n
+	config DOXYGEN_RTF
+	 bool "Enable rtf output feature"
+	 default n
+	config DOXYGEN_XML
+	 bool "Enable xml output feature"
+	 default n
+	config DOXYGEN_PS
+	 bool "Enable ps output feature"
+	 default n
+endmenu
+
+# PAPER SIZE
+# a4wide|a4|letter|legal|executive
+choice DOXYGEN_PAPERSIZE
+  prompt "Select Doxygen paper size"
+  depends on DOXYGEN_PS || DOXYGEN_PDF
+  config DOXYGEN_PAPERSIZE_A4
+   bool "a4"
+  config DOXYGEN_PAPERSIZE_A4WIDE
+   bool "a4wide"
+  config DOXYGEN_PAPERSIZE_LETTER
+   bool "letter"
+  config DOXYGEN_PAPERSIZE_LEGAL
+   bool "legal"
+  config DOXYGEN_PAPERSIZE_EXECUTIVE
+   bool "executive"
+endchoice
+
+
+
+
+endif # ENABLE_DOXYGEN

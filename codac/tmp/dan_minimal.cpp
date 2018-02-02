@@ -18,77 +18,71 @@
 
 #include <pthread.h>
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // THREAD BASE  ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
-class Thread
-{
-public:
-   Thread() {}
-   virtual ~Thread() {}
-
-   bool StartThread() {
-      return (pthread_create(&_thread, NULL, InternalThreadEntryFunc, this) == 0);
-   }
-
-   void StopThread() {
-       pthread_cancel(_thread);
-   }
-
-   void WaitForThreadToExit() {
-      (void) pthread_join(_thread, NULL);
-   }
-
-protected:
-   virtual void InternalThreadEntry() = 0;
-
-private:
-   static void * InternalThreadEntryFunc(void * This) {
-       ((Thread *)This)->InternalThreadEntry();
-       return NULL;
-   }
-
-   pthread_t _thread;
-};
+// ccStickers //
+#include <Core/Thread.h>
+#include <Core/ConditionVar.h>
+#include <Core/WaitSubscribe.h>
 
 
 class MonitorThread : public Thread {
     dan_DataCore &dc;
-    static const int update_val = 1;
-    int pos;
+    static const size_t update_val = 10;
+    size_t pos;
+    ConditionVar wc;
   public:
     MonitorThread(dan_DataCore &dc) :
         dc(dc),
-        pos(0)
+        pos(0),
+        wc()
     {
-        int ns = dc->datacoreInfo->nSubscribers;
-        for (int i=0; i<ns; ++i) {
+        int nsub = dc->datacoreInfo->nSubscribers;
+        for (int i=0; i<nsub; ++i) {
             st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
-            std::cout << "s: " << si.name << "\n";
+            std::cout << "sub: " << si.name << "\n";
+            // initialize profilers //
             dan_initProfiler(&si.latency,update_val);
+            dan_initProfiler(&si.throu,update_val);
+        }
+        int nsrc = dc->datacoreInfo->nSources;
+        for (int i=0; i<nsrc; ++i) {
+            st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
+            std::cout << "src: " << si.name << "\n";
+            // initialize profilers //
+            dan_initProfiler(&si.wlat,update_val);
             dan_initProfiler(&si.throu,update_val);
         }
     }
 
-    MonitorThread& operator ++() { ++pos; InternalThreadEntry(); return *this; }
+    MonitorThread& operator ++() { if(pos++%update_val == 0) wc.notify(); return *this; }
 
     virtual void InternalThreadEntry() {
-        // print list of subscribers //
-        int ns = dc->datacoreInfo->nSubscribers;
-        for (int i=0; i<ns; ++i) {
-            st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
-            std::cout << "s: " << si.name << " "
-                      << "l: " << dan_profiler_getAverageValue(&si.latency) << " "
-                      << "t: " << dan_profiler_getAverageValue(&si.throu) << " "
-                      << "\n";
+        while(1) {
+            wc.wait(); // wait for external call to wake up //
+            int ns = dc->datacoreInfo->nSubscribers;
+            for (int i=0; i<ns; ++i) {
+                st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
+                std::cout << "s: " << si.name << " "
+                          << "l: " << dan_profiler_getAverageValue(&si.latency) << " "
+                          << "t: " << dan_profiler_getAverageValue(&si.throu)/1024/1024 << "[MBps] "
+                          << "\n";
+            }
+            ns = dc->datacoreInfo->nSources;
+            for (int i=0; i<ns; ++i) {
+                st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
+                std::cout << "s: " << si.name << " "
+                          << "l: " << dan_profiler_getAverageValue(&si.wlat) << " "
+                          << "t: " << dan_profiler_getAverageValue(&si.throu)/1024/1024 << "[MBps] "
+                          << "\n";
+            }
         }
     }
+
 };
-
-
-
 
 
 // "sdd-dan.h" //
@@ -227,15 +221,18 @@ int main(int argc, char **argv)
     //    PV<long> gen_csiz_KB ("EC-DAN-ACQ:GEN_PKTSIZE"); // KB
     //    size_t gen_rate  = gen_rate_KB * 1024;
     //    size_t gen_csiz  = gen_csiz_KB * 1024;
-    size_t gen_rate  = 1024 * 1024;
-    size_t gen_csiz  = 1024;
+
+    size_t gen_trate  = 1024;
+    size_t gen_csize  = 1024;
+    try { gen_trate = atoi(getenv("DAN_TESTS_TRATE")); } catch(...){}
+    try { gen_csize = atoi(getenv("DAN_TESTS_CSIZE")); } catch(...){}
 
     // Block size constant in Bytes
-    size_t chunkSize  = ((gen_csiz == 0 ) ? 1024 : gen_csiz);
+    size_t chunkSize  = ((gen_csize == 0 ) ? 1024 : gen_csize);
     size_t bufferSize = 2*chunkSize;  // Source DAQBuffer size
-    double sampleRate = gen_rate / sizeof(SAMPLE_TYPE); // Ksps
+    double sampleRate = gen_trate / sizeof(SAMPLE_TYPE); // Ksps
 
-    log_info("[GEN] rate: %d, chunk size: %d", (long)gen_rate, chunkSize);
+    log_info("[GEN] rate: %d, chunk size: %d", (long)gen_trate, chunkSize);
 
     // DAN DATACORE INIT ///////////////////////////////////////////////////////
     dc = dan_initLibrary();
@@ -288,9 +285,9 @@ int main(int argc, char **argv)
     }
 
     // FILL DATA ///////////////////////////////////////////////////////////////
-    values = (SAMPLE_TYPE *) malloc ( 2 * MAX(gen_rate, chunkSize) );
+    values = (SAMPLE_TYPE *) malloc ( 2 * MAX(gen_trate, chunkSize) );
     initBufferWithSineData((char *)values,
-                           2 * MAX(gen_rate, chunkSize), // size Bytes
+                           2 * MAX(gen_trate, chunkSize), // size Bytes
                            0,             // pos  Bytes
                            sampleRate,    // R
                            1);            // T (1s period)
@@ -299,7 +296,11 @@ int main(int argc, char **argv)
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+    /// LOOP ///
+
+    // MONITOR //
     MonitorThread mt(dc);
+    mt.StartThread();
 
     size_t pos = 0;
     while(!__terminate && ( tcn_wait_until(till,0) == TCN_SUCCESS )
@@ -324,7 +325,7 @@ int main(int argc, char **argv)
                                               ((char *)values) + pos,
                                               chunkSize,
                                               (char *)&blockHead);
-        pos = (pos+chunkSize)%gen_rate;
+        pos = (pos+chunkSize)%gen_trate;
 
         // Detected overflow in pass datablock reference queue
         if (dan_err == -1) {
@@ -339,8 +340,11 @@ int main(int argc, char **argv)
 
         log_info("[GEN] pkt-loop ... \n");
 
+        // monitor update //
+        ++mt;
+
         // ACQ interval
-        double dt_ns = (double)chunkSize / gen_rate * 1E9;
+        double dt_ns = (double)chunkSize / gen_trate * 1E9;
         till += (int)dt_ns;
         // ++counter;
 

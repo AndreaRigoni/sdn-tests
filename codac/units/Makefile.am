@@ -47,7 +47,7 @@ download-all: ##@svnpub perform svn checkout on all deps
 all: $(NAME) mvn-compile
 
 
-list: ##@ext list defined ic units
+list: ##@svnpub list defined ic units
 list : _item = $(info | $1: ) $(foreach x,$($1),$(info |  - $x))
 list:
 	@ \

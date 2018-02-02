@@ -39,15 +39,52 @@ pv_test_SOURCES = pv_access.cpp pv_test.cpp
 bin_PROGRAMS   += dan_minimal
 dan_minimal_SOURCES = pv_access.cpp dan_minimal.cpp
 dan_minimal_CONFIG  = dan_minimal.xml
+dan_minimal_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
 
 
+DAN_TESTS = dan_minimal
 NAME = dan_minimal
 
-ptest: ##@dan perform test in $NAME
-ptest: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
-ptest: dan-aw-start dan-api-reload dan-st-start
+list: ##@dan list defined dan tests
+list: _item = $(info | $1: ) $(foreach x,$($1),$(info |  - $x))
+list:
+	@ \
+	$(info ,-----------------------------------------------------------------) \
+	$(info | DAN tests defined ($$NAME) ) \
+	$(info |) \
+	$(call _item,DAN_TESTS) \
+	$(info |) \
+	$(info | CURRENT: $(NAME)) \
+	$(info |) \
+	$(info `-----------------------------------------------------------------) :
+
+
+## DEFAULTS ##
+DAN_ARCHIVE_MASTER = localhost:9999
+DAN_ARCHIVE_SLAVE = localhost:9999
+DAN_TESTS_TRATE = 1024
+DAN_TESTS_CSIZE = 1024
+
+export DAN_ARCHIVE_MASTER \
+	   DAN_ARCHIVE_SLAVE \
+	   DAN_TESTS_TRATE \
+	   DAN_TESTS_CSIZE
+
+test-set: ##@dan initialize api for test in $NAME
+test-set: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
+test-set: dan-aw-start dan-api-init dan-st-start
+
+test-run: ##@dan perform test in $NAME
+test-run: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
+# test-run: dan-api-reload
+test-run:
 	@ $(call _env_set) \
 	  ./$(NAME)
+
+test-stop: ##@dan stop test in $NAME
+test-stop: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
+test-stop: dan-st-stop
+
 
 _env_set =
 _dump = $(if $($1),$(info - int: $1=$($1)),$(info - int: $1 <empty>)) \
