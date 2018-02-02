@@ -1,0 +1,25 @@
+Index: m-dan-daq/src/main/c/dan_api/dan_Profile.c
+===================================================================
+--- m-dan-daq/src/main/c/dan_api/dan_Profile.c	(revision 83913)
++++ m-dan-daq/src/main/c/dan_api/dan_Profile.c	(working copy)
+@@ -165,15 +165,14 @@
+     uint64_t now;
+     double dif;
+ 
+-	now=dan_util_getTime();
++    now=dan_util_getTime();
++    dif=(double)(now - *lasttime);
+     *lasttime=now;
+-	dif=(double)(now - *lasttime);
+-    if (dif < 1.0) {
+-    	dif=1.0;
+-    }
+-	return (value * 1e9)/ (double)(dif);
++    if (dif < 1.0) { dif=1.0; }
++    return ((double)value) * 1e9 / dif;
+ }
+ 
++
+ /**
+  * Returns the current ITER time based on system time
+  * @return Current ITER time based on system time in nanoseconds
