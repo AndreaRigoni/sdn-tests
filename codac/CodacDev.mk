@@ -50,7 +50,6 @@ unit_VARIABLES = SVN_BRA SVN_DEP MVN_ARGS
 
 $(foreach x,$(unit_VARIABLES),$(eval override $x=$(call _var,$x)))
 
-
 svn_%: $(SVN_DEP)
 	  $(info ,----------------------------------------------------- )
 	  $(info | performing svn on unit: $(NAME))
@@ -59,6 +58,18 @@ svn_%: $(SVN_DEP)
 	  $(info |   deps:   $(SVN_DEP))
 	@ svn $(subst svn_,,$@) $(SVN_URL)/$(SVN_DIR)/$(NAME)/$(SVN_BRA) $(srcdir)/$(NAME); \
 	  ln -s $(srcdir)/$(NAME) $(NAME)
+
+SVN_PATCH_DIR = $(srcdir)/unit_patches
+UNIT_PATCHES  = $($(NAME)_PATCHES)
+
+$(SVN_PATCH_DIR):
+	@ $(MKDIR_P) $@
+
+
+NODOCKERBUILD += svn-diff
+svn-diff: ##@svnpub create svn patch
+svn-diff: $(NAME) $(SVN_PATCH_DIR)
+	@ svn diff $(NAME) > $(SVN_PATCH_DIR)/$(NAME)_$(shell date -u +%s).patch
 
 
 ic-dialog: ##@svnpub manually download icdev units

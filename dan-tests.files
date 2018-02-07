@@ -3443,6 +3443,7 @@ codac/units/m-maven-iter-plugin/target/maven-archiver/pom.properties
 codac/units/m-maven-iter-plugin/target/maven-iter-plugin-5.4.0.jar
 codac/units/m-maven-iter-settings/pom.xml
 codac/units/m-maven-iter-settings/update-units.sh
+codac/units/unit_patches/m-dan-daq_1517591975.patch
 conf/autoconf-archive/COPYING
 conf/autoconf-archive/COPYING.EXCEPTION
 conf/autoconf-archive/Makefile.am
