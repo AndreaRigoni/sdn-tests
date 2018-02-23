@@ -113,9 +113,6 @@ AC_CHECK_PROGS([PERL],[perl])
 ## BUILD_COMMON ##
 m4_sinclude(conf/kscripts/build_common.ac)
 
-## TOOLCHAIN ##
-m4_sinclude(conf/kscripts/toolchain.ac)
-
 ## CODAC ##
 m4_sinclude(conf/kscripts/iter_codac.ac)
 
@@ -128,29 +125,6 @@ m4_sinclude(conf/kscripts/nodejs.ac)
 ## DOXYGEN ##
 m4_sinclude(conf/autoconf-doxygen/doxygen.ac)
 
-## EXT_LIBJIT ##
-m4_sinclude(conf/kscripts/ext_libjit.ac)
-
-## EXT_LLVM ##
-m4_sinclude(conf/kscripts/ext_llvm.ac)
-
-## EXT_CCSTICKERS ##
-m4_sinclude(conf/kscripts/ext_ccStickers.ac)
-
-## EXT_JSONRPCC ##
-m4_sinclude(conf/kscripts/ext_jsonrpcc.ac)
-
-## EXT ##
-AX_KCONFIG_MODULES([EXT],
-		  [libjit],[libjit external sources],
-		  [llvm],[llvm external sources],
-		  [ccStickers],[ccStickers external sources],
-		  [jsonrpcc],[jsonrpcc external sources]
-		  )
-AC_SUBST([EXT_MODULES])
-
-## YOCTO ##
-m4_sinclude(conf/kscripts/yocto.ac)
 
 ## // GIT IGNORE // ##
 AX_GITIGNORE_ADD_PATH([${builddir}])

@@ -19,7 +19,6 @@
 ## ////////////////////////////////////////////////////////////////////////// //
 
 include Common.mk
-include $(top_srcdir)/conf/kscripts/yocto.mk
 
 
 AM_MAKEFLAGS = -j$(MAKE_PROCESS)
