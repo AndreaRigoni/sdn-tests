@@ -1,22 +1,37 @@
+## ////////////////////////////////////////////////////////////////////////// //
+##
+## This file is part of the dan-tests project.
+## Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+## ////////////////////////////////////////////////////////////////////////// //
+
+
+
 dnl Process this file with autoconf to produce a configure script.
 
 dnl AUTOCONF ///////////////////////////////////////////////////////////////////
-dnl AC_PREREQ([2.63])
-AC_INIT([autoconf-bootstrap],[0.1],[andrea.rgn@gmail.com])
-
-AC_CONFIG_MACRO_DIR([conf/m4])
-dnl ACLOCAL_AMFLAGS=-I conf/m4
-
+AC_PREREQ([2.69])
+AC_INIT([autoconf-bootstrap], [0.1], [andrea.rgn@gmail.com])
+AC_CONFIG_MACRO_DIRS([conf/m4])
 AC_CONFIG_AUX_DIR([conf])
 dnl AC_CONFIG_SRCDIR([...])
 AC_CANONICAL_TARGET
 
-m4_version_prereq([2.69],[],
-[m4_include([conf/m4/m4_prereq_2.69.m4])])
-
-
 dnl AUTOMAKE ///////////////////////////////////////////////////////////////////
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([1.14 foreign subdir-objects])
 
 
 dnl update submodules at first ... (must be cleaned out)
@@ -31,19 +46,21 @@ AS_VAR_SET([srcdir],[${srcdir}])
 AS_VAR_SET([builddir],[$(pwd)])
 AX_KCONFIG([conf/kconfig])
 
+dnl AX_TARGET_SELFHELP /////////////////////////////////////////////////////////
+AX_TARGET_SELFHELP
 
 # //////////////////////////////////////////////////////////////////////////// #
 # //  DOCKER BUILD /////////////////////////////////////////////////////////// #
 # //////////////////////////////////////////////////////////////////////////// #
 
 AS_VAR_IF([CONFIG_ENABLE_DOCKER_BUILD],[y],[
-		  AS_VAR_SET_IF([CONFIG_DOCKER_CONTAINER],
-			 [AS_VAR_SET([DOCKER_CONTAINER],[${CONFIG_DOCKER_CONTAINER}])] )
-		  AS_VAR_SET_IF([CONFIG_DOCKER_IMAGE],
-			 [AS_VAR_SET([DOCKER_IMAGE],[${CONFIG_DOCKER_IMAGE}])] )
-		  AS_VAR_SET_IF([CONFIG_DOCKER_URL],
-			 [AS_VAR_SET([DOCKER_URL],[${CONFIG_DOCKER_URL}])])
-		 ])
+           AS_VAR_SET_IF([CONFIG_DOCKER_CONTAINER], 
+              [AS_VAR_SET([DOCKER_CONTAINER],[${CONFIG_DOCKER_CONTAINER}])] )
+           AS_VAR_SET_IF([CONFIG_DOCKER_IMAGE], 
+              [AS_VAR_SET([DOCKER_IMAGE],[${CONFIG_DOCKER_IMAGE}])] )
+           AS_VAR_SET_IF([CONFIG_DOCKER_URL], 
+              [AS_VAR_SET([DOCKER_URL],[${CONFIG_DOCKER_URL}])])
+          ])
 
 AX_KCONFIG_VAR_WITH([DOCKER_SHARES],["set with DOCKER_SHARES"])
 AC_SUBST([DOCKER_SHARES])
@@ -68,6 +85,7 @@ AX_CHECK_ENABLE_DEBUG([no],,,,[-g -O2])
 # Checks for programs.
 AC_PROG_AWK
 AC_PROG_MKDIR_P
+AC_PROG_LN_S
 AC_PROG_SED
 AC_PROG_CC
 AC_PROG_CXX
@@ -130,6 +148,9 @@ AX_KCONFIG_MODULES([EXT],
 		  [jsonrpcc],[jsonrpcc external sources]
 		  )
 AC_SUBST([EXT_MODULES])
+
+## YOCTO ##
+m4_sinclude(conf/kscripts/yocto.ac)
 
 ## // GIT IGNORE // ##
 AX_GITIGNORE_ADD_PATH([${builddir}])
