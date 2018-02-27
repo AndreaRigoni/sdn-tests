@@ -24,7 +24,7 @@
    <debug >
 	<srvChunkHeaderSize >20</srvChunkHeaderSize>
 	<srvChunkSize >${DAN_TESTS_CSIZE}</srvChunkSize>
-	<srvBufferSize >2</srvBufferSize>
+	<srvBufferSize >${DAN_TESTS_BSIZE}</srvBufferSize>
    </debug>
   </advancedSource>
 

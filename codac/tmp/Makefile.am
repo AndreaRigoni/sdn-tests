@@ -1,15 +1,33 @@
+## ////////////////////////////////////////////////////////////////////////// //
+##
+## This file is part of the dan-tests project.
+## Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+## ////////////////////////////////////////////////////////////////////////// //
 
 
 include $(top_srcdir)/Common.mk
-# include $(top_srcdir)/codac/CodacDev.mk
+include $(top_srcdir)/codac/CodacDan.mk
 
 _LIBS = ca dan_api dan_client_api dan_stream xml2 log sdn rt pthread tcn
 LIBRARY_DIRS =
 
 # DAN_DAQ_DIR = $(top_srcdir)/codac/units/
-
-# Already set from docker env in /etc/profile (bash -l)
 #
+# Already set from docker env in /etc/profile (bash -l)
 # CODAC_ROOT          ?= /opt/codac-5.4
 # EPICS_BASE          ?= /opt/codac-5.4/epics
 # SDN_TOPIC_DIRECTORY ?= /opt/codac-5.4/apps/include
@@ -63,14 +81,18 @@ list:
 
 ## DEFAULTS ##
 DAN_ARCHIVE_MASTER = localhost:9999
-DAN_ARCHIVE_SLAVE = localhost:9999
-DAN_TESTS_TRATE = 1024
-DAN_TESTS_CSIZE = 1024
+DAN_ARCHIVE_SLAVE  = localhost:9999
+DAN_TESTS_TRATE    = 1024
+DAN_TESTS_CSIZE    = 12
+DAN_TESTS_BSIZE    = 64
+DAN_TESTS_DURATION = 10
 
 export DAN_ARCHIVE_MASTER \
 	   DAN_ARCHIVE_SLAVE \
 	   DAN_TESTS_TRATE \
-	   DAN_TESTS_CSIZE
+	   DAN_TESTS_CSIZE \
+	   DAN_TESTS_BSIZE \
+	   DAN_TESTS_DURATION
 
 test-set: ##@dan initialize api for test in $NAME
 test-set: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
@@ -80,18 +102,15 @@ test-run: ##@dan perform test in $NAME
 test-run: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
 # test-run: dan-api-reload
 test-run:
-	@ $(call _env_set) \
-	  ./$(NAME)
+	@ ./$(NAME)
 
 test-stop: ##@dan stop test in $NAME
 test-stop: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
 test-stop: dan-st-stop
 
-
-_env_set =
-_dump = $(if $($1),$(info - int: $1=$($1)),$(info - int: $1 <empty>)) \
-		echo "- env: $1=$${$1}";
 env-dump: ##@codac dump env variables used for build codac components
+env-dump: _dump = $(if $($1),$(info - int: $1=$($1)),$(info - int: $1 <empty>)) echo "- env: $1=$${$1}";
+env-dump:
 	@ $(call _env_set) \
 	  $(call _dump,CODAC_ROOT) \
 	  $(call _dump,EPICS_HOST_ARCH) \
@@ -100,47 +119,5 @@ env-dump: ##@codac dump env variables used for build codac components
 	  $(call _dump,DAN_ARCHIVE_MASTER) \
 	  $(call _dump,DAN_ARCHIVE_SLAVE)
 
-
-
-## ////////////////////////////////////////////////////////////////////////// ##
-## /// DAN API ////////////////////////////////////////////////////////////// ##
-## ////////////////////////////////////////////////////////////////////////// ##
-
-
-CU_SETTINGS_DIR ?= $(srcdir)
 CU_PCF_DANCONF   = $(CU_SETTINGS_DIR)/dan_minimal.xml
 
-DAN_APITOOL_BIN ?= /opt/codac/bin/danApiTool
-
-# this Fixes the dan-plot tool for the Qt-X11 window
-export QT_X11_NO_MITSHM = 1
-
-
-dan-api-init:   ##@dan DAN-API initialize unit PCF config
-dan-api-reload: ##@dan DAN-API reload unit PCF config
-dan-api-init dan-api-reload:
-	- $(call _env_set) \
-	  $(foreach x,$(CU_PCF_DANCONF),nohup $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@) $x;)
-
-dan-api-close:  ##@dan DAN-API close all active API
-dan-api-status: ##@dan DAN-API return status
-dan-api-close dan-api-status:
-	@ $(call _env_set) \
-	  $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@)
-
-
-SUBSCRIBERS ?= ALL
-dan-st-start: ##@dan STREAMER start ${SUBSCRIBERS}
-dan-st-stop: ##@dan STREAMER stop ${SUBSCRIBERS}
-dan-st-restart: ##@dan STREAMER restart ${SUBSCRIBERS}
-dan-st-%:
-	@ $(call _env_set) \
-	  $(DAN_APITOOL_BIN) streamer $(subst dan-st-,,$@) $(SUBSCRIBERS)
-
-dan-aw-start:   ##@dan ARCHIVER start
-dan-aw-restart: ##@dan ARCHIVER restart
-dan-aw-stop:    ##@dan ARCHIVER stop
-dan-aw-%: USER=root
-dan-aw-%:
-	-@ $(call _env_set) \
-	  dan_archiver_writer $(subst dan-aw-,,$@)

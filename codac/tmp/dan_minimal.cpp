@@ -1,3 +1,23 @@
+// ////////////////////////////////////////////////////////////////////////// //
+//
+// This file is part of the dan-tests project.
+// Copyright 2018 Andrea Rigoni Garola <andrea.rigoni@igi.cnr.it>.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// ////////////////////////////////////////////////////////////////////////// //
+
 
 // "sys-headers.h" //
 #include <stdlib.h>
@@ -5,6 +25,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <signal.h>
+
+
 
 #include <math.h>
 #include <iostream>
@@ -19,9 +41,6 @@
 #include <pthread.h>
 
 
-////////////////////////////////////////////////////////////////////////////////
-// THREAD BASE  ////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 // ccStickers //
 #include <Core/Thread.h>
@@ -29,26 +48,50 @@
 #include <Core/WaitSubscribe.h>
 
 
+#include <stdarg.h>
+
+
+// "sdd-dan.h" //
+#include "dan/dan_DataCore.h"
+#include "dan/dan_Source.h"
+static const char DummySrc[] = "DummySrc";
+static const char TERM_CHAR_UP[] = "\e[A";
+
+
+////////////////////////////////////////////////////////////////////////////////
+// MONITOR  ////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+///
+/// \brief The MonitorThread class
+///
 class MonitorThread : public Thread {
     dan_DataCore &dc;
     static const size_t update_val = 10;
     size_t pos;
     ConditionVar wc;
-  public:
+    dan_Monitor monitor;
+
+public:
     MonitorThread(dan_DataCore &dc) :
         dc(dc),
         pos(0),
-        wc()
+        wc(),
+        monitor(NULL)
     {
         int nsub = dc->datacoreInfo->nSubscribers;
+        int nsrc = dc->datacoreInfo->nSources;
+
         for (int i=0; i<nsub; ++i) {
             st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
             std::cout << "sub: " << si.name << "\n";
+            si.ovfErrors = 0;
             // initialize profilers //
             dan_initProfiler(&si.latency,update_val);
             dan_initProfiler(&si.throu,update_val);
         }
-        int nsrc = dc->datacoreInfo->nSources;
         for (int i=0; i<nsrc; ++i) {
             st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
             std::cout << "src: " << si.name << "\n";
@@ -58,37 +101,69 @@ class MonitorThread : public Thread {
         }
     }
 
+    ///
+    /// \brief add_monitor
+    /// \param src_name   Monitor Source (and set NULL the other)
+    /// \param subscrib_name Monitor Subscriber (and set NULL the other)
+    ///
+    void set_monitor(const char *src_name, const char *subscrib_name) {
+        this->monitor = dan_monitor_initMonitor(dc,src_name,subscrib_name);
+    }
+
     MonitorThread& operator ++() { if(pos++%update_val == 0) wc.notify(); return *this; }
 
     virtual void InternalThreadEntry() {
         while(1) {
             wc.wait(); // wait for external call to wake up //
-            int ns = dc->datacoreInfo->nSubscribers;
-            for (int i=0; i<ns; ++i) {
+            int nsub = dc->datacoreInfo->nSubscribers;
+            int nsrc = dc->datacoreInfo->nSources;
+            int line_waste = nsub + nsrc;
+            std::cout << ",-----------------------\n"; line_waste += 1;
+            for (int i=0; i<nsub; ++i) {
                 st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
+                double lat = dan_profiler_getAverageValue(&si.latency);
+                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
                 std::cout << "s: " << si.name << " "
-                          << "l: " << dan_profiler_getAverageValue(&si.latency) << " "
-                          << "t: " << dan_profiler_getAverageValue(&si.throu)/1024/1024 << "[MBps] "
-                          << "\n";
+                          << "l: " << lat << " "
+                          << "t: " << tpt << "[MBps] "
+                          << "e: " << si.ovfErrors << " "
+                          << "        \n";
             }
-            ns = dc->datacoreInfo->nSources;
-            for (int i=0; i<ns; ++i) {
+            for (int i=0; i<nsrc; ++i) {
                 st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
+                double lat = dan_profiler_getAverageValue(&si.wlat);
+                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
                 std::cout << "s: " << si.name << " "
-                          << "l: " << dan_profiler_getAverageValue(&si.wlat) << " "
-                          << "t: " << dan_profiler_getAverageValue(&si.throu)/1024/1024 << "[MBps] "
-                          << "\n";
+                          << "l: " << lat << "[ms] "
+                          << "t: " << tpt << "[MBps] "
+                          << "        \n";
+            }
+            if(this->monitor) {
+                dan_Monitor mon = this->monitor;
+                std::cout
+                          // Number of free bytes that are available in the DAQBuffer
+                          << "sr dataFree   " << dan_monitor_source_dataFree(mon)/1024 << " [KB]        \n"
+
+                          // Number of free datablock reference that are available in the queue
+                          << "sr queueFree  " << dan_monitor_source_queueFree(mon) << " [bref]       \n";
+
+                          // total throughput in bytes/second associated to the source that is monitored by dMon
+                          // << "sr throughput " << dan_monitor_source_thoughput(mon) << "        \n";
+                line_waste += 2;
+            }
+            std::cout << "`-----------------------\n"; line_waste += 1;
+
+            for(int i=0; i<line_waste;++i) {
+                std::cout << TERM_CHAR_UP;
             }
         }
     }
-
 };
 
 
-// "sdd-dan.h" //
-#include "dan/dan_DataCore.h"
-#include "dan/dan_Source.h"
-static const char DummySrc[] = "DummySrc";
+////////////////////////////////////////////////////////////////////////////////
+//  BUFFER FILL  ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 // "dan_MetadataTypes.h" //
@@ -186,6 +261,10 @@ static void initBufferWithStaticSineData(char *buffer, size_t size, size_t ipos)
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  MAIN  //////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, char **argv)
 {
     // example of code to demonstrate a DAN source
@@ -211,26 +290,43 @@ int main(int argc, char **argv)
     // LOG INIT //
     InitializeLOG();
 
+    //  SYNC USING PVs //
     //    pon_err = ca_context_create(ca_disable_preemptive_callback);
     //    if(pon_err != ECA_NORMAL) {
     //        log_error("Error during PON init");
     //        exi_err = 1;
     //    }
-
+    //
     //    PV<long> gen_rate_KB ("EC-DAN-ACQ:GEN_FREQ");    // KBps
     //    PV<long> gen_csiz_KB ("EC-DAN-ACQ:GEN_PKTSIZE"); // KB
     //    size_t gen_rate  = gen_rate_KB * 1024;
     //    size_t gen_csiz  = gen_csiz_KB * 1024;
 
-    size_t gen_trate  = 1024;
-    size_t gen_csize  = 1024;
+    size_t gen_trate  = 10;   // [MB/s]
+    size_t gen_csize  = 12;   // [KB]
+    size_t gen_bsize  = 64;   // [KB]
     try { gen_trate = atoi(getenv("DAN_TESTS_TRATE")); } catch(...){}
     try { gen_csize = atoi(getenv("DAN_TESTS_CSIZE")); } catch(...){}
+    try { gen_bsize = atoi(getenv("DAN_TESTS_BSIZE")); } catch(...){}
 
     // Block size constant in Bytes
-    size_t chunkSize  = ((gen_csize == 0 ) ? 1024 : gen_csize);
-    size_t bufferSize = 2*chunkSize;  // Source DAQBuffer size
-    double sampleRate = gen_trate / sizeof(SAMPLE_TYPE); // Ksps
+    gen_trate *= 1024 * 1024;
+    gen_csize *= 1024;
+    gen_bsize *= 1024;
+
+    size_t chunkSize  = gen_csize;
+    size_t bufferSize = gen_bsize;
+    double sampleRate = gen_trate / sizeof(SAMPLE_TYPE);
+
+    std::cout << "| --- Current setup ---" << std::endl
+              << "| srate: " << sampleRate << std::endl
+              << "| csize: " << chunkSize << std::endl
+              << "| bsize: " << bufferSize << std::endl
+              ;
+
+    // test duration [s]
+    uint64_t tot_duration = 10E9; // 10s
+    try { tot_duration = atoi(getenv("DAN_TESTS_DURATION"))*1E9; } catch(...){}
 
     log_info("[GEN] rate: %d, chunk size: %d", (long)gen_trate, chunkSize);
 
@@ -270,11 +366,10 @@ int main(int argc, char **argv)
     // DAQBuffer.
     dan_publisher_openStream(ds,sampleRate,0);
 
-    // TCN get time //
-    uint64_t max_duration = 6E9; // 6s
     uint64_t till;
     uint64_t init_acq = 0;
 
+    // TCN get time //
     tcn_err = tcn_get_time(&till);
     if (tcn_err != TCN_SUCCESS) {
         log_error( "[GEN] TCN gettime NOK : %s\n", tcn_strerror(tcn_err));
@@ -300,11 +395,12 @@ int main(int argc, char **argv)
 
     // MONITOR //
     MonitorThread mt(dc);
+//    mt.set_monitor(DummySrc,0);
     mt.StartThread();
 
     size_t pos = 0;
     while(!__terminate && ( tcn_wait_until(till,0) == TCN_SUCCESS )
-                       && ( till-init_acq ) < max_duration )
+                       && ( till-init_acq ) < tot_duration )
         // WAIT UNTIL ABSOLUTE TIME OR MAX DURATION //
     {
 
@@ -338,8 +434,7 @@ int main(int argc, char **argv)
                      DummySrc, dan_publisher_getCheckPolicy(ds));
         }
 
-        log_info("[GEN] pkt-loop ... \n");
-
+        // log_info("[GEN] pkt-loop ... \n");
         // monitor update //
         ++mt;
 
