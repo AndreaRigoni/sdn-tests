@@ -2233,12 +2233,20 @@ build/ext/jsonrpcc/missing
 build/ext/jsonrpcc/src/Makefile.am
 build/ext/jsonrpcc/src/cJSON.c
 build/ext/jsonrpcc/src/jsonrpc-c.c
+codac/CodacDan.mk
 codac/CodacDev.mk
 codac/Makefile.am
 codac/docker/Dockerfile
 codac/docker/Makefile.am
 codac/docker/codac_v5_entry.sh
 codac/maven_settings.xml
+codac/reports/Makefile.am
+codac/reports/configure.ac
+codac/reports/hdd_performance/Makefile.am
+codac/reports/hdd_performance/fio-plot.cpp
+codac/reports/hdd_performance/fio_plot.sh
+codac/reports/hdd_performance/rand_access.ini
+codac/reports/hdd_performance/write_trs.ini
 codac/tmp/Makefile.am
 codac/tmp/Qt/Makefile.am
 codac/tmp/Qt/dan_monitor.pro
@@ -7526,6 +7534,8 @@ conf/kscripts/docker.kconfig
 conf/kscripts/docker.mk
 conf/kscripts/ext_ccStickers.ac
 conf/kscripts/ext_ccStickers.kconfig
+conf/kscripts/ext_fio.ac
+conf/kscripts/ext_fio.kconfig
 conf/kscripts/ext_jsonrpcc.ac
 conf/kscripts/ext_jsonrpcc.kconfig
 conf/kscripts/ext_libjit.ac
@@ -49407,6 +49417,7 @@ src/libjit_examples/t3.c
 src/libjit_examples/t4.cpp
 src/libjit_examples/t5.c
 src/main.cpp
+src/ncurses/console_plot.h
 src/parse_examples/Makefile.am
 src/parse_examples/ch2-03.l
 src/parse_examples/lorem_ipsum.txt

@@ -78,17 +78,15 @@ menuconfig  ENABLE_EXTSRC
 
 if ENABLE_EXTSRC
 
-  # //  LIBJIT  //
-  source conf/kscripts/ext_libjit.kconfig
-
-  # //  LLVM  //
-  source conf/kscripts/ext_llvm.kconfig
-
   # //  CCSTICKERS  //
   source conf/kscripts/ext_ccStickers.kconfig
 
   # //  JSONRPCC  //
   source conf/kscripts/ext_jsonrpcc.kconfig
+
+  # //  FIO  //
+  source conf/kscripts/ext_fio.kconfig
+
 
 endif # ENABLE_EXTSRC
 

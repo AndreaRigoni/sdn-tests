@@ -118,3 +118,6 @@ node/react/r1
 build/ext/ccStickers
 build/ext/ccStickers/src
 codac/units/unit_patches
+src/ncurses
+codac/reports
+codac/reports/hdd_performance

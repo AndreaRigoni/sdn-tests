@@ -113,6 +113,9 @@ AC_CHECK_PROGS([PERL],[perl])
 ## BUILD_COMMON ##
 m4_sinclude(conf/kscripts/build_common.ac)
 
+## TOOLCHAIN ##
+m4_sinclude(conf/kscripts/toolchain.ac)
+
 ## CODAC ##
 m4_sinclude(conf/kscripts/iter_codac.ac)
 
@@ -126,9 +129,36 @@ m4_sinclude(conf/kscripts/nodejs.ac)
 m4_sinclude(conf/autoconf-doxygen/doxygen.ac)
 
 
+## EXT_CCSTICKERS ##
+m4_sinclude(conf/kscripts/ext_ccStickers.ac)
+
+## EXT_FIO ##
+m4_sinclude(conf/kscripts/ext_jsonrpcc.ac)
+
+## EXT_FIO ##
+m4_sinclude(conf/kscripts/ext_fio.ac)
+
+
+## EXT ##
+AX_KCONFIG_MODULES([EXT],
+		  [ccStickers],[ccStickers external sources],
+		  [jsonrpcc],[jsonrpcc external sources],
+		  [fio],[fio external sources]
+		  )
+AC_SUBST([EXT_MODULES])
+
+
+
 ## // GIT IGNORE // ##
 AX_GITIGNORE_ADD_PATH([${builddir}])
 AX_GITIGNORE_SUBST
+
+
+## SUBDIRS configure.ac ##
+AX_CONFIG_SUBDIRS(
+		codac/reports
+		)
+
 
 AC_CONFIG_FILES( Makefile
 				 codac/Makefile
