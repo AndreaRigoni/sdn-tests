@@ -31,7 +31,7 @@ dnl AC_CONFIG_SRCDIR([...])
 AC_CANONICAL_TARGET
 
 dnl AUTOMAKE ///////////////////////////////////////////////////////////////////
-AM_INIT_AUTOMAKE([1.14 foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 
 dnl update submodules at first ... (must be cleaned out)
