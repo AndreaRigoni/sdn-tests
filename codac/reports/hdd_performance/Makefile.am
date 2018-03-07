@@ -22,8 +22,15 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/codac/CodacDan.mk
 
-_LIBS = ca dan_api dan_client_api dan_stream xml2 log sdn rt pthread tcn
-LIBRARY_DIRS =
+all: write-test
+
+
+## ////////////////////////////////////////////////////////////////////////////////
+## //  DAN COMPILE  ///////////////////////////////////////////////////////////////
+## ////////////////////////////////////////////////////////////////////////////////
+
+DAN_LIBS = ca dan_api dan_client_api dan_stream xml2 log sdn rt pthread tcn
+DAN_LIBRARY_DIRS =
 
 # DAN_DAQ_DIR = $(top_srcdir)/codac/units/
 #
@@ -33,24 +40,27 @@ LIBRARY_DIRS =
 # SDN_TOPIC_DIRECTORY ?= /opt/codac-5.4/apps/include
 # EPICS_HOST_ARCH     ?= linux-x86_64
 
-INCLUDE_DIRS=. \
-			 $(CODAC_ROOT)/include \
-			 $(EPICS_BASE)/include/os/Linux \
-			 $(EPICS_BASE)/include/compiler/gcc \
-			 $(EPICS_BASE)/include /usr/include/libxml2 \
-			 $(SDN_TOPIC_DIRECTORY)
+DAN_INCLUDE_DIRS=. \
+				 $(CODAC_ROOT)/include \
+				 $(EPICS_BASE)/include/os/Linux \
+				 $(EPICS_BASE)/include/compiler/gcc \
+				 $(EPICS_BASE)/include /usr/include/libxml2 \
+				 $(SDN_TOPIC_DIRECTORY)
 
 
-LDLIBS=-L$(CODAC_ROOT)/lib \
-	   -L$(EPICS_BASE)/lib/$(EPICS_HOST_ARCH) \
-		 $(foreach libs,$(LIBRARY_DIRS),-L$(libs) -Wl,-rpath,$(libs)) \
-		 $(foreach libs,$(_LIBS),-l$(libs))
+DAN_LDLIBS=-L$(CODAC_ROOT)/lib \
+		   -L$(EPICS_BASE)/lib/$(EPICS_HOST_ARCH) \
+		   $(foreach libs,$(DAN_LIBRARY_DIRS),-L$(libs) -Wl,-rpath,$(libs)) \
+		   $(foreach libs,$(DAN_LIBS),-l$(libs))
 
 
-AM_CPPFLAGS = $(foreach inc,$(INCLUDE_DIRS),-I$(inc))
-AM_LDFLAGS  = $(LDLIBS)
+# AM_CPPFLAGS = $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
+# AM_LDFLAGS  = $(DAN_LDLIBS)
 
 
+## ////////////////////////////////////////////////////////////////////////////////
+## //  FIO  ///////////////////////////////////////////////////////////////////////
+## ////////////////////////////////////////////////////////////////////////////////
 
 fio: ##@ext build fio tool
 fio: $(FIO)
@@ -63,48 +73,100 @@ FIO_GENERATE_PLOTS = $(top_builddir)/ext/fio/tools/fio_generate_plots
 $(FIO_GENERATE_PLOTS): fio
 
 
-## Random read/write performance
-## ./fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 \
-		 --name=test --filename=test --bs=4k --iodepth=64 --size=4G  \
-		 --readwrite=randrw --rwmixread=75
-
-FIO_LOG_TYPES = bw clat iops lat slat
-FIO_LOG_LOGS  = $(foreach y,$($(subst .log,,$(FIO_LOGS))_LOGS),\
-						  $(foreach x,$(FIO_LOG_TYPES),$y_$x.*.log))
+# // DISCONTINUED //
+# FIO_LOG_TYPES = bw clat iops lat slat
+# FIO_LOG_LOGS  = $(foreach y,$($(subst .log,,$(FIO_LOGS))_LOGS),\
+#						  $(foreach x,$(FIO_LOG_TYPES),$y_$x.*.log))
+# write_trs_LOGS = seq-test \
+#				 rnd-test
 
 FIO_LOGS = \
-		   write_trs.log
-#		   rand_access.log
-
-write_trs_LOGS = seq-test
-
+		   write_fio.log
 
 CLEANFILES = $(FIO_LOGS) \
 			 $(subst .log,.dat,$(FIO_LOGS)) \
-			 $(FIO_LOG_LOGS) \
-			 *.eps
+			 $(FIO_LOG_LOGS) *.log \
+			 *.eps *.png
 
-## exports for the ini files
+## // exports for the ini files //
 export builddir
+export size
+export blocksize
+export numjobs
 
+write_fio.log: ##@tests perform fio hdd throughput test
 $(FIO_LOGS): %.log: %.ini
 	@ $(FIO) $< --filename=$*.dat > $@
 
 
-# bin_PROGRAMS      = fio-plot
-# fio_plot_SOURCES  = fio-plot.cpp
-# fio_plot_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
-
 plots: fio_plot.sh
 	@ sh $< "test"
 
+# bin_PROGRAMS      = fio-plot
+# fio_plot_SOURCES  = fio-plot.cpp
+# fio_plot_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
 
 .eps.png:
 	@ convert -density 300 $< $@
 
 
 
-all: $(FIO) $(FIO_LOGS)
+## ////////////////////////////////////////////////////////////////////////////////
+## //  DAN INJECTOR TESTS  ////////////////////////////////////////////////////////
+## ////////////////////////////////////////////////////////////////////////////////
+
+DAN_INJECTOR = /opt/codac/tests/dan/dan-api-injector
+DAN_INJ_TYPE = INT16_RAW_P INT16_HDF_P INT16_SRV_P
+
+DAN_LOGS = write_dan
+
+CLEANFILES += *.h5
+
+# Number of channels 1 or 2
+# Total payload size, B default 10M
+# Transfer rate, KB/sec (absent or 0 - maximal available)
+# Data block size, B default 100K
+# HDF5 payload chunk size. B default 10 datablocks
+# HDF5 headers chunk size, headers
+write_dan_ARGS = 1 4G 0 512K 1M
+
+write_dan: ##@tests perform DAN ijector tests
+$(DAN_LOGS): _dan_inj = $(foreach typ,$(DAN_INJ_TYPE),\
+			 $(DAN_INJECTOR)_$(typ) $(abs_builddir)/$1_$(typ).h5 $($1_ARGS) > \
+			 $1_$(typ).log && mv DAN_Injector.log $1_data_$(typ).log;)
+
+$(DAN_LOGS):
+	@ $(call _dan_inj,$@)
+
+
+shell:
+	@ bash -l
+
+
+## ////////////////////////////////////////////////////////////////////////////////
+## //  INDEPENDENT TEST   /////////////////////////////////////////////////////////
+## ////////////////////////////////////////////////////////////////////////////////
+
+
+bin_PROGRAMS        = write-test
+write_test_SOURCES  = write_test.cpp
+write_test_CPPFLAGS = -std=c++0x -I$(top_builddir)/ext/ccStickers/src
+write_test_LDFLAGS  =
+write_test_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
+
+
+$(addprefix run-,$(bin_PROGRAMS)): run-%: %
+	@ ./$*
+
+
+write_test_ARGS = --size 8 --bs 512 --bufs 1024
+write-test.log: ##@tests run local write-test application
+write-test.log: write-test
+	@ ./write-test write-test.dat $(write_test_ARGS)
+
+
+
+
 
 
 

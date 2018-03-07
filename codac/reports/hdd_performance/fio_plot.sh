@@ -112,13 +112,12 @@ plot () {
 	do
 		if [ -e "$x" ]; then
 			i=$((i+1))
-			PT=$(echo $x | sed 's/\(.*\)_'$FILETYPE'\(.*\).log$/\1\2/')
 			if [ ! -z "$PLOT_LINE" ]
 			then
 				PLOT_LINE=$PLOT_LINE", "
 			fi
-			DEPTH=$(echo $PT | cut -d "-" -f 4)
-			PLOT_LINE=$PLOT_LINE"'$x' using (\$1/1000):(\$2/($SCALE)) title \"Queue depth $DEPTH\" with ${5-lines} ls $i"
+			NAME=$(echo $x | cut -d "_" -f 1)
+			PLOT_LINE=$PLOT_LINE"'$x' using (\$1/1000):(\$2/($SCALE)) title \"$NAME\" with ${5-lines} ls $i"
 		fi
 	done
 
@@ -138,8 +137,7 @@ plot () {
 # plot <sub title> <file name tag> <y axis label> <y axis scale>
 #
 plot "I/O Latency" lat "Time (msec)" 1000
-plot "I/O Operations Per Second" iops "IOPS" 1
+#plot "I/O Operations Per Second" iops "IOPS" 1
 plot "I/O Submission Latency" slat "Time (μsec)" 1
 plot "I/O Completion Latency" clat "Time (msec)" 1000
-# plot "I/O Bandwidth" bw "Throughput (MB/s)" 1024 dots
 plot "I/O Bandwidth" bw "Throughput (MB/s)" 1024 dots
