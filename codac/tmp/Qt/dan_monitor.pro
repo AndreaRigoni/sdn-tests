@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT  += core gui qgl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,13 +22,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+SOURCES += $$(dan_monitor_SOURCES)
+HEADERS += $$(dan_monitor_HEADERS)
+FORMS += $$(dan_monitor_FORMS)
 
-SOURCES += \
-        main.cpp \
-        mainwindow.cpp
-
-HEADERS += \
-        mainwindow.h
-
-FORMS += \
-        mainwindow.ui
+LIBS += -L$$(top_builddir)/ext/qwt/qwt/lib -lqwt $$(top_builddir)/ext/ccStickers/.libs/libccStickers.a
+INCLUDEPATH += $$(top_builddir)/ext/qwt/qwt/src $$(top_builddir)/ext/ccStickers/src
+DEPENDPATH  += $$(top_builddir)/ext/qwt/qwt/src

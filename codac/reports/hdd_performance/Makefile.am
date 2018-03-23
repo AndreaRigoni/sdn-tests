@@ -22,14 +22,27 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/codac/CodacDan.mk
 
-all: write-test
+all: write-raw
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  DAN COMPILE  ///////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
-DAN_LIBS = ca dan_api dan_client_api dan_stream xml2 log sdn rt pthread tcn
+DAN_LIBS = \
+		   ca  \
+		   dan_archive \
+		   dan_stream \
+		   xml2 log sdn rt pthread tcn \
+		   dan_base \
+		   dan_api \
+		   dan_client_api \
+		   dan_hdf
+
+
+#COMMON_SOURCE_DIR=$(top_builddir)/codac/units/m-dan-common/src/main/c/common
+#COMMON_SOURCES = dan_cMetadataCash.c dan_stream_struct.c
+
 DAN_LIBRARY_DIRS =
 
 # DAN_DAQ_DIR = $(top_srcdir)/codac/units/
@@ -53,6 +66,9 @@ DAN_LDLIBS=-L$(CODAC_ROOT)/lib \
 		   $(foreach libs,$(DAN_LIBRARY_DIRS),-L$(libs) -Wl,-rpath,$(libs)) \
 		   $(foreach libs,$(DAN_LIBS),-l$(libs))
 
+DAN_CPPFLAGS = -g -fPIC -O2 -fno-strict-aliasing -pthread -W -Wall -Wno-unused \
+-Wno-parentheses -DNDEBUG -Di586 -DARCH='"i586"' -DLINUX -D_LARGEFILE64_SOURCE \
+-D_GNU_SOURCE -D_REENTRANT -D_LITTLE_ENDIAN $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
 
 # AM_CPPFLAGS = $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
 # AM_LDFLAGS  = $(DAN_LDLIBS)
@@ -116,7 +132,8 @@ plots: fio_plot.sh
 ## ////////////////////////////////////////////////////////////////////////////////
 
 DAN_INJECTOR = /opt/codac/tests/dan/dan-api-injector
-DAN_INJ_TYPE = INT16_RAW_P INT16_HDF_P INT16_SRV_P
+DAN_INJ_TYPE = INT16_RAW_P
+# INT16_HDF_P INT16_SRV_P
 
 DAN_LOGS = write_dan
 
@@ -148,30 +165,53 @@ shell:
 ## ////////////////////////////////////////////////////////////////////////////////
 
 
-bin_PROGRAMS        = write-test
-write_test_SOURCES  = write_test.cpp
-write_test_CPPFLAGS = -std=c++0x -I$(top_builddir)/ext/ccStickers/src
-write_test_LDFLAGS  =
-write_test_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
+bin_PROGRAMS        = write-raw
+write_raw_SOURCES  = write_raw.cpp
+write_raw_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
+write_raw_LDFLAGS  =
+write_raw_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
 
 
 $(addprefix run-,$(bin_PROGRAMS)): run-%: %
 	@ ./$*
 
 
-write_test_ARGS = --size 8 --bs 512 --bufs 1024
-write-test.log: ##@tests run local write-test application
-write-test.log: write-test
-	@ ./write-test write-test.dat $(write_test_ARGS)
+write_raw_ARGS = --size 10 --bs 512 --bufs 1024
+write-raw.log: ##@tests run local write-raw application
+write-raw.log: ext write-raw
+	@ ./write-raw write-raw.dat $(write_raw_ARGS)
 
 
 
+ext: ##@ext compile externals
+ext: $(CCSTICKERS_LA)
+
+.PHONY: $(CCSTICKERS_LA)
+CCSTICKERS_LA = $(top_builddir)/ext/ccStickers/libccStickers.la
+$(CCSTICKERS_LA):
+	@ $(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir)/ext ext-ccStickers
+
+
+CLEANFILES += write-raw.log
 
 
 
+## ////////////////////////////////////////////////////////////////////////////////
+## //  HDF  ///////////////////////////////////////////////////////////////////////
+## ////////////////////////////////////////////////////////////////////////////////
+
+bin_PROGRAMS += write_hdf
+write_hdf_SOURCES  = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)) write_hdf.cpp
+write_hdf_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
+write_hdf_LDFLAGS  = $(DAN_LDLIBS)
+write_hdf_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
 
 
 
+NAME ?= $(lastword $(bin_PROGRAMS))
 
+run: ##@tests run test in NAME
+run: $(NAME)
+	@ $(builddir)/$(NAME) $(ARGS)
 
 

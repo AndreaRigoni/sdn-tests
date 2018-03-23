@@ -5,7 +5,7 @@
 
 #include <string>
 #include <iostream>
-#include <regex>
+// #include <regex>
 
 #include <Core/Options.h>
 #include <Core/Timer.h>
@@ -17,6 +17,28 @@
 
 
 #include "Math/StatisticUtils.h"
+
+
+
+//size_t options_get_size(const char *p_size)
+//{
+//    int len = strlen(p_size);
+//    if (len == 0) return -1;
+//    char last_char = p_size[len - 1];
+//    if (isdigit(last_char)) return atol(p_size);
+//    if (len == 1) return -1;
+//    switch (last_char)
+//    {
+//        case 'K': return atol(p_size) * 1024UL;
+//        case 'M': return atol(p_size) * 1048576UL;
+//        case 'G': return atol(p_size) * 1073741824UL;
+//        case 'T': return atol(p_size) * 1099511627776UL;
+//        case 'E': return atol(p_size) * 1125899906842620UL;
+//    }
+//    return -1;
+//}
+
+
 
 
 int main(int argc, char *argv[])
@@ -45,9 +67,9 @@ int main(int argc, char *argv[])
     Histogram<double> bw("bw",400,0,4E3);
 
 
-    static const size_t MI_WINDOW = 800;
+    static const size_t MI_WINDOW = 400;
     StatUtils::MI     lat_MI(MI_WINDOW);
-    StatUtils::MA     bw_MA(100);
+    StatUtils::MA     bw_MA(MI_WINDOW);
 
     Curve2D           bw_MI_curve("bw MI");
     Curve2D           bw_MA_curve("bw MA");
@@ -73,25 +95,26 @@ int main(int argc, char *argv[])
             double dt = t1-t0; t0=t1;
             lat.Push(dt/count);
             lat_MI.add(dt/count);
-            double tp = 1.*bs_K/1024*count/dt*1000;
-            double tp_ma = 1.*bs_K/1024*1000*lat_MI.size()/lat_MI.sum();
-            bw.Push(tp);
-            bw_MA.add(tp_ma);
-            if (time.GetElapsed_ms() > (10)*tcnt) {
-                lat_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),dt/count,0));
+            double tp_i   = 1.*bs_K/1024*count/dt*1000;
+            double tp_all = 1.*bs_K/1024*i/time.GetElapsed_s();
+            double tp_mi  = 1.*bs_K/1024*1000*lat_MI.size()/lat_MI.sum();
+            bw_MA.add(tp_mi);
+            bw.Push(tp_mi);
+            if (time.GetElapsed_ms() > (100)*tcnt) {
+                lat_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
+                                                  dt/count,0));
                 bwm_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                  1.*bs_K/1024*i/time.GetElapsed_s(),0));
-                bw_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),tp,0));
+                                                  tp_all,0));
+                bw_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
+                                                 tp_i,0));
                 bw_MI_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                    1.*bs_K/1024*1000*lat_MI.size()/lat_MI.sum(),0));
+                                                    tp_mi,0));
                 bw_MA_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                    bw_MA.mean(),0));
+                                                    bw_MA.mean(),bw_MA.rms()));
                 tcnt++;
             }
         }
     }
-
-
 
     std::cout << " --- latency [ms] ---- \n"
               << "lat min:  " << lat.Min() << std::endl
@@ -103,23 +126,22 @@ int main(int argc, char *argv[])
               << "bw mean: " << bw.MeanAll() << std::endl
               << "bw max:  " << bw.Max() << std::endl;
 
-
     // std::cout << lat << "\n";
     // std::cout << bw  << "\n";
 
     Plot2D plot("lat_histogram");
-    //    plot.AddCurve(bw);
+    // plot.AddCurve(bw);
     plot.AddCurve(lat);
     plot.PrintToGnuplotFile("bw_h");
 
-
     Plot2D plot2("bw_curve");
-    plot2.AddCurve(bw_curve);
+    // plot2.AddCurve(bw_curve);
     plot2.AddCurve(bw_MI_curve);
     plot2.AddCurve(bw_MA_curve);
     plot2.AddCurve(bwm_curve);
+    plot2.YAxis().SetScaleType(Plot2D::AxisType::LogScale);
     plot2.CurveFlags(1) = Plot2D::ShowLines | Plot2D::ShowPoints;
-    plot2.PrintToGnuplotFile("bw_c");
+    plot2.PrintToGnuplotFile("bw_c",Plot2D::GnuplotStyle2);
 
     return 0;
 }

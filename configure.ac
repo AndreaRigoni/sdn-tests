@@ -73,8 +73,6 @@ AC_SUBST([DOCKER_PS1])
 
 AX_DOCKER_BUILD([bootstrap])
 
-dnl AX_TARGET_SELFHELP /////////////////////////////////////////////////////////
-AX_TARGET_SELFHELP
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -104,7 +102,6 @@ AC_CHECK_PROGS([PERL],[perl])
 
 ## LIBTOOL
 LT_INIT()
-
 
 ## /////////////////////////////////////////////////////////////////////////////
 ## //  KSCRIPTS  ///////////////////////////////////////////////////////////////
@@ -159,12 +156,12 @@ AX_CONFIG_SUBDIRS(
 		codac/reports
 		)
 
-
 AC_CONFIG_FILES( Makefile
 				 codac/Makefile
 				 codac/units/Makefile
 				 codac/tmp/Makefile
 				 codac/tmp/Qt/Makefile
+				 codac/tmp/Qwt_cpuplot/Makefile
 				 codac/docker/Makefile
 				 ext/Makefile
 				 node/Makefile
