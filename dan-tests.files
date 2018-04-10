@@ -2161,7 +2161,9 @@ build/ext/ccStickers/src/Core/Timer.h
 build/ext/ccStickers/src/Core/WaitSubscribe.h
 build/ext/ccStickers/src/Core/foreach.h
 build/ext/ccStickers/src/Core/macros.h
+build/ext/ccStickers/src/Core/shared_ptr.h
 build/ext/ccStickers/src/Core/streams_interaction.h
+build/ext/ccStickers/src/Core/testing/AtomicGccTest.cpp
 build/ext/ccStickers/src/Core/testing/CoreTest.cpp
 build/ext/ccStickers/src/Core/testing/Makefile.am
 build/ext/ccStickers/src/Core/testing/MplSequenceCombinerTest.cpp
@@ -2260,6 +2262,17 @@ codac/reports/dan_performance/dan_hdf.cpp
 codac/reports/dan_performance/dan_metadata_cache.h
 codac/reports/dan_performance/dan_performance.h
 codac/reports/dan_performance/dan_raw.cpp
+codac/reports/dan_performance/test_multich.cpp
+codac/reports/dancc/Makefile.am
+codac/reports/dancc/dancc.h
+codac/reports/dancc/dancc_archive_client.h
+codac/reports/dancc/dancc_data_item.h
+codac/reports/dancc/dancc_data_source.cpp
+codac/reports/dancc/dancc_data_source.h
+codac/reports/dancc/dancc_metadata.h
+codac/reports/dancc/dancc_stream.h
+codac/reports/dancc/dancc_test1.cpp
+codac/reports/dancc/dancc_test2.cpp
 codac/reports/hdd_performance/Makefile.am
 codac/reports/hdd_performance/fio-plot.cpp
 codac/reports/hdd_performance/fio_plot.sh
@@ -2267,6 +2280,11 @@ codac/reports/hdd_performance/write_fio.ini
 codac/reports/hdd_performance/write_hdf.cpp
 codac/reports/hdd_performance/write_raw.cpp
 codac/tmp/Makefile.am
+codac/tmp/Netlink/Makefile.am
+codac/tmp/Netlink/nl_stats.c
+codac/tmp/Netlink/nl_stats.h
+codac/tmp/Netlink/nl_stats_test.cpp
+codac/tmp/Netlink/tuntap_test.cpp
 codac/tmp/Qt/Makefile.am
 codac/tmp/Qt/cpustat.cpp
 codac/tmp/Qt/cpustat.h
@@ -7594,6 +7612,7 @@ conf/m4/ax_check_nodejs.m4
 conf/m4/ax_compare_version.m4
 conf/m4/ax_compiler_vendor.m4
 conf/m4/ax_compiler_version.m4
+conf/m4/ax_config_subdirs.m4
 conf/m4/ax_defun_local.m4
 conf/m4/ax_docker_build.m4
 conf/m4/ax_download_repository.m4

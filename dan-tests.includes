@@ -143,3 +143,13 @@ build/codac/units/m-dan-daq/src/test/c/stream_dummy
 build/codac/units/m-dan-common/src/test/c/stream_dummy
 codac/reports/dan_performance
 build/codac/units/m-dan-common/src/main/c
+codac/reports/dancc
+conf/m4
+build/ext/ccStickers/src/Core
+build/ext/ccStickers/src/Core/testing
+codac/tmp/Netlink
+
+
+
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-archiver-writer/src/main/c/include
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-archiver-reader/src/main/c++/include

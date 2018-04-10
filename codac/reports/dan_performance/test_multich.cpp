@@ -88,8 +88,6 @@ int main(int argc, char *argv[])
     device_init(&stream_meta);
     config_init(&stream_meta);
 
-    // INIT SUBSCRIBER //
-    subscriber_init(&stream_meta);
 
     // pulse_init(&stream_meta);
 
@@ -115,6 +113,8 @@ int main(int argc, char *argv[])
     //  CLT STREAM  ////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
 
+    // INIT SUBSCRIBER //
+    subscriber_init(&stream_meta);
 
     DAN_CLIENT_CONFIG config_clt;
     init_client_config(&config_clt, "DANCLT");
@@ -131,21 +131,21 @@ int main(int argc, char *argv[])
             << "\n"
                ;
 
-    ARCHIVE_STREAM_CLIENT *p_stream;
+    ARCHIVE_STREAM_CLIENT *p_stream_0;
+    ARCHIVE_STREAM_CLIENT *p_stream_1;
     ARCHIVE_STREAM_CLIENT_GROUP group;
-    dan_create_stream_group(&group, 1, "GROUP1", "Pulse1");
+    dan_create_stream_group(&group, 2, "GROUP1", "Pulse1");
 
     int meta_size;
     void *p_meta = dan_metadata_cash_get_all_data(&stream_meta, &meta_size);
     res = dan_create_archive_stream_in_group(&group, 0, meta_size, p_meta);
-
-
-
+    res = dan_create_archive_stream_in_group(&group, 1, meta_size, p_meta);
 
     dan_open_stream_group ( &group, &config_clt );
 
-    p_stream = dan_get_archive_stream(&group,0);
 
+    p_stream_0 = dan_get_archive_stream(&group,0);
+    p_stream_1 = dan_get_archive_stream(&group,1);
 
     // init profiles with first chunk //
     profiler_data_add(&prof, 0);
@@ -162,17 +162,24 @@ int main(int argc, char *argv[])
         header.pbl_data.reserve = 0;
         header.pbl_data.sampling_rate = SamplingRate; // Important to rebuild timestamps
         header.start_sample_id = i; // TODO: Comprehend why not i * n_samples ??
-        dan_set_publisher_header(p_stream, sizeof(PUBLISHER_DATA_BLOCK_HEADER), &header.pbl_data);
+        dan_set_publisher_header(p_stream_0, sizeof(PUBLISHER_DATA_BLOCK_HEADER), &header.pbl_data);
+        dan_set_publisher_header(p_stream_1, sizeof(PUBLISHER_DATA_BLOCK_HEADER), &header.pbl_data);
 
         time_nanosec_t ts_nanos;
         ts_nanos = ts_secs_0 * 1e9 + ts_nanos_0 + i * n_samples * 1e9 / SamplingRate;
 
-        dan_write_archive_datablock(p_stream, ts_nanos, i, n_samples, data);
-        dan_commit_datablock(p_stream,0);
+        // NOTICE: you have to commit before any other write attempt //
+        //
+        dan_write_archive_datablock(p_stream_0, ts_nanos, i, n_samples, data);
+        dan_commit_datablock(p_stream_0,0);
+        profiler_data_add(&prof, data_size);
 
+        dan_write_archive_datablock(p_stream_1, ts_nanos, i, n_samples, data);
+        dan_commit_datablock(p_stream_1,0);
         profiler_data_add(&prof, data_size);
     }
     //////////////////////////////////////////////////////////////////////////////////
+
 
     dan_close_stream_group(&group);
 

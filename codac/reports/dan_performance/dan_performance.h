@@ -146,7 +146,9 @@ int device_init(dan_MetadataCash *meta_mngr)
     SAFE_STRCPY(static_config.source_version, "1.0Dev");
     SAFE_STRCPY(static_config.source_serial_number, "ManufactureCode111");
 
-    // <-------- SETUP
+    ////////////////////////////////////////////////////////////////////////////////
+    //  SOURCE CONDFIG /////////////////////////////////////////////////////////////
+    //
     int in_sample_meta_header_len = 0;
     int in_sample_meta_footer_len = 0;
 
@@ -161,6 +163,10 @@ int device_init(dan_MetadataCash *meta_mngr)
                                      sizeof(SOURCE_STATIC_CONFIG),
                                      &static_config);
 
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //  ADDITIONAL ATTRIBUTES  /////////////////////////////////////////////////////
+    //
     stream_attribute attributes[2];
     memset(attributes, 0, 2 * sizeof(stream_attribute));
 
@@ -180,10 +186,12 @@ int device_init(dan_MetadataCash *meta_mngr)
                                      metaTypeUserAttributes,
                                      2 * sizeof(stream_attribute), attributes);
 
-    // DEBUG //
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //  DEBUG  /////////////////////////////////////////////////////////////////////
+    //
     STREAM_DEBUG debug;
 
-    // <-------- SETUP
     int nSamplesChunkSize = 1000000;
     int nHeadersChunkSize = 1;
 
@@ -221,7 +229,7 @@ int config_init(dan_MetadataCash *meta_mngr)
                                sizeof(PUBLISHER_STATIC_CONFIG),
                                &pbl_static_config);
 
-    channel_info channels_info[1];
+    channel_info channels_info[2];
     memset(channels_info, 0, 1 * sizeof(channel_info));
 
     channels_info[0].source_channel_number = 1;
@@ -229,17 +237,16 @@ int config_init(dan_MetadataCash *meta_mngr)
     SAFE_STRCPY(channels_info[0].label, "FROM_DETECTOR_1");
     SAFE_STRCPY(channels_info[0].stream_unit, "a.u.");
 
-//    channels_info[1].source_channel_number = 2;
-//    SAFE_STRCPY(channels_info[1].pv_name, "PV_NAME_1D_2");
-//    SAFE_STRCPY(channels_info[1].label, "FROM_DETECTOR_2");
-//    SAFE_STRCPY(channels_info[1].stream_unit, "a.u.");
+    channels_info[1].source_channel_number = 2;
+    SAFE_STRCPY(channels_info[1].pv_name, "PV_NAME_1D_2");
+    SAFE_STRCPY(channels_info[1].label, "FROM_DETECTOR_2");
+    SAFE_STRCPY(channels_info[1].stream_unit, "a.u.");
 
     // SET_META_STD_CHANNEL_INFO //
     res = dan_metadata_cash_set_data(meta_mngr,
                                metaTypeStdChannelInfo,
                                n_channels * sizeof(channel_info),
                                channels_info);
-
 
     return res;
 }

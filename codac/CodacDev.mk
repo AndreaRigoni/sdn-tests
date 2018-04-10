@@ -36,6 +36,7 @@ export DOCKER_ENTRYPOINT = $(abs_top_srcdir)/codac/$(CODAC_NAME)_entry.sh
 
 SVN_URL     ?= https://svnpub.iter.org/codac/iter
 SVN_BRA     ?= trunk
+SVN_USER    ?= rigonia
 DEV_DIR     ?= codac/dev/units
 ICDEV_DIR   ?= codac/icdev/units
 
@@ -56,7 +57,7 @@ svn_%: $(SVN_DEP)
 	  $(info |   unit:   $(NAME))
 	  $(info |   branch: $(SVN_BRA))
 	  $(info |   deps:   $(SVN_DEP))
-	@ svn $(subst svn_,,$@) $(SVN_URL)/$(SVN_DIR)/$(NAME)/$(SVN_BRA) $(srcdir)/$(NAME); \
+	@ svn --username $(SVN_USER) $(subst svn_,,$@) $(SVN_URL)/$(SVN_DIR)/$(NAME)/$(SVN_BRA) $(srcdir)/$(NAME); \
 	  ln -s $(srcdir)/$(NAME) $(NAME)
 
 SVN_PATCH_DIR = $(srcdir)/unit_patches
@@ -71,6 +72,8 @@ svn-diff: ##@svnpub create svn patch
 svn-diff: $(NAME) $(SVN_PATCH_DIR)
 	@ svn diff $(NAME) > $(SVN_PATCH_DIR)/$(NAME)_$(shell date -u +%s).patch
 
+
+export SVN_USER
 
 ic-dialog: ##@svnpub manually download icdev units
 ic-dialog: $(srcdir)/dialog_svnpub_download.sh

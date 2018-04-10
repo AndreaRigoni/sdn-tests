@@ -35,7 +35,8 @@ DAN_LIBS = \
 		   dan_base \
 		   dan_api \
 		   dan_client_api \
-		   dan_hdf
+		   dan_hdf \
+		   pthread
 
 
 #COMMON_SOURCE_DIR=$(top_builddir)/codac/units/m-dan-common/src/main/c/common
@@ -68,30 +69,32 @@ DAN_CPPFLAGS = -g -fPIC -O2 -fno-strict-aliasing -pthread -W -Wall -Wno-unused \
 -Wno-parentheses -DNDEBUG -Di586 -DARCH='"i586"' -DLINUX -D_LARGEFILE64_SOURCE \
 -D_GNU_SOURCE -D_REENTRANT -D_LITTLE_ENDIAN $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
 
-DAN_COOMON = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)))
+# AM_CPPFLAGS = $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
+# AM_LDFLAGS  = $(DAN_LDLIBS)
 
 
-AM_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
-AM_LDFLAGS  = $(DAN_LDLIBS)
-LDADD       = $(top_builddir)/ext/ccStickers/libccStickers.la
+lib_LTLIBRARIES = libdancc.la
 
+libdancc_la_SOURCES  = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)) \
+				 dancc_data_source.cpp
 
-
-bin_PROGRAMS = danraw danhdf danclt test_multich
-
-danraw_SOURCES = dan_raw.cpp
-danhdf_SOURCES = dan_hdf.cpp
-danclt_SOURCES = dan_clt.cpp
-test_multich_SOURCES = test_multich.cpp
+libdancc_la_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
+libdancc_la_LDFLAGS  = $(DAN_LDLIBS)
+libdancc_la_LIBADD   = $(top_builddir)/ext/ccStickers/libccStickers.la
 
 
 
+bin_PROGRAMS = test1 test2
 
+test1_SOURCES = dancc_test1.cpp
+test1_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
+test1_LDFLAGS  = $(DAN_LDLIBS)
+test1_LDADD   = $(top_builddir)/ext/ccStickers/libccStickers.la libdancc.la
 
-
-## ////////////////////////////////////////////////////////////////////////////////
-## //  RUN  ///////////////////////////////////////////////////////////////////////
-## ////////////////////////////////////////////////////////////////////////////////
+test2_SOURCES = dancc_test2.cpp
+test2_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
+test2_LDFLAGS  = $(DAN_LDLIBS)
+test2_LDADD   = $(top_builddir)/ext/ccStickers/libccStickers.la libdancc.la
 
 
 NAME = $(lastword $(bin_PROGRAMS))
@@ -99,7 +102,15 @@ run: ##@tests run test in NAME
 run: $(NAME)
 	@ $(builddir)/$(NAME) $(ARGS)
 
+debug: ##@tests debug test in NAME
+debug: $(NAME)
+	@ libtool --mode=execute gdb $(builddir)/$(NAME) $(ARGS)
+
+clean_local:
+	@ rm -rf /tmp/data/*
+
+plot:
+	@ dan-plot VT /tmp/data/*.h5 0 0
+
 shell:
 	@ bash -l
-
-

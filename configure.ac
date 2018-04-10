@@ -150,7 +150,6 @@ AC_SUBST([EXT_MODULES])
 AX_GITIGNORE_ADD_PATH([${builddir}])
 AX_GITIGNORE_SUBST
 
-
 ## SUBDIRS configure.ac ##
 AX_CONFIG_SUBDIRS(
 		codac/reports
@@ -162,6 +161,7 @@ AC_CONFIG_FILES( Makefile
 				 codac/tmp/Makefile
 				 codac/tmp/Qt/Makefile
 				 codac/tmp/Qwt_cpuplot/Makefile
+				 codac/tmp/Netlink/Makefile
 				 codac/docker/Makefile
 				 ext/Makefile
 				 node/Makefile
