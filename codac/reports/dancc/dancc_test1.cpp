@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     std::string opt_server_name("localhost");
     std::string opt_server_port("9999");
-    size_t bd_size = 1000;
+    size_t bd_size = 24;
     Options opt;
     opt.AddOptions()
             ("server", &opt_server_name, "server name or ip")
@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
 
 
     for(size_t i=0; i<vf.size(); ++i)
-        vf[i] = tan((double)i*M_PI_2/vf.size());
+//        vf[i] = tan((double)i*M_PI_2/vf.size());
+        vf[i] = i;
     test1.initDataBlock(vf);
 
     for(size_t i=0; i<vf.size(); ++i)
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
     ar.addDataStream(stream2);
 
     std::cout << "\n\n" << ar.group() << "\n";
-    ar.writeAllBlocksPerStream(10);
+    ar.writeAllBlocksPerStream(1);
     // ar.writeSingleBlockPerStream(10);
     //    ar.writeMultiThreads(10);
 

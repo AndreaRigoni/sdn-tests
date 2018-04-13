@@ -104,9 +104,9 @@ public:
 
                 time_nanosec_t ts_nanos;
                 ts_nanos = ts_secs_0 * 1e9 + ts_nanos_0 + b * n_samples * 1e9 / source->getSampleRate();
-                dan_write_archive_datablock(stream, ts_nanos, b, n_samples, buffer);
+                dan_write_archive_datablock(stream, ts_nanos, 0, n_samples, buffer);
 
-                std::cout << (DAN_CLT_DATA_BLOCK_HEADER*)stream->p_header_buffer << "\n";
+                // std::cout << (DAN_CLT_DATA_BLOCK_HEADER*)stream->p_header_buffer << "\n";
                 dan_commit_datablock(stream, 0);
             }
         }
@@ -168,7 +168,7 @@ void ArchiveClient::WriteDataBlockThread::InternalThreadEntry()
         dan_commit_datablock(m_stream, 0);
         m_parent->unlock();
 
-        std::cout << "..... " << ((DAN_CLT_DATA_BLOCK_HEADER *)m_stream->p_header_buffer)->start_sample_id << "\n";
+        // std::cout << "..... " << ((DAN_CLT_DATA_BLOCK_HEADER *)m_stream->p_header_buffer)->start_sample_id << "\n";
 
     }
 }

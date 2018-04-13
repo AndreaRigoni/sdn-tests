@@ -27,13 +27,14 @@ class Stream {
     PUBLISHER_STATIC_CONFIG pbl_static_config;
     ARCHIVE_STREAM_CLIENT  *m_stream;
     const DataSource       *m_source;
-
 public:
 
     Stream(ARCHIVE_STREAM_CLIENT *other = NULL) :
         m_stream(other),
         m_source(NULL)
-    {}
+    {
+        init_stream();
+    }
 
     ~Stream() {}
 
@@ -42,67 +43,24 @@ public:
     ARCHIVE_STREAM_CLIENT *getStream() { return m_stream; }
     const ARCHIVE_STREAM_CLIENT *getStream() const { return m_stream; }
 
-    err_t init() {
-
-        err_t res;
+    err_t init_stream() {
+        err_t res = 0;
         if (!m_stream) {
             m_stream = (ARCHIVE_STREAM_CLIENT*)malloc(sizeof(ARCHIVE_STREAM_CLIENT));
-
             dan_MetadataCash c_meta;
             dan_metadata_cash_init(&c_meta);
             res = dan_create_archive_stream(m_stream, sizeof(dan_MetadataCash),&c_meta);
         }
-
-        // TODO: find if it is necessary //
-        // subscriber //
-        dan_MetadataCash *meta = &m_stream->meta_cash;
-        SUBSCRIBER_STATIC_CONFIG subscriber_conf;
-        init_subscriber_static_config(&subscriber_conf);
-        get_subscriber_static_config(&subscriber_conf);
-        res = dan_metadata_cash_set_data(meta, metaTypeSubscriber,
-                                         sizeof(SUBSCRIBER_STATIC_CONFIG),
-                                         &subscriber_conf);
         return res;
     }
 
     void setDataSource(const DataSource &src) {
         err_t res;
         m_source = &src;
+        //        dan_MetadataCash *meta = &m_stream->meta_cash;
 
-        init();
-        dan_MetadataCash *meta = &m_stream->meta_cash;
-
-        // publisher meta //
-        dan_metadata_cash_set_data(meta,
-                                   metaTypeStaticConfig,
-                                   sizeof(PUBLISHER_STATIC_CONFIG),
-                                   &src.publisherInfo() );
-
-        // source meta //
-        dan_metadata_cash_set_data(meta,
-                                   metaTypeSourceStaticConfig,
-                                   sizeof(SOURCE_STATIC_CONFIG),
-                                   &src.sourceInfo() );
-
-
-
-        ////////////////////////////////////////////////////////////////////////////////
-        //  CHANNEL _INFO  /////////////////////////////////////////////////////////////
-        //
-        // TODO: take from data source //
-        size_t n_channels = 1;
-        channel_info channels_info[2];
-        memset(channels_info, 0, 1 * sizeof(channel_info));
-
-        channels_info[0].source_channel_number = 1;
-        SAFE_STRCPY(channels_info[0].pv_name, "PV_NAME_1D_1");
-        SAFE_STRCPY(channels_info[0].label, "FROM_DETECTOR_1");
-        SAFE_STRCPY(channels_info[0].stream_unit, "a.u.");
-
-        // SET_META_STD_CHANNEL_INFO //
-        res = dan_metadata_cash_set_data(meta, metaTypeStdChannelInfo,
-                                         n_channels * sizeof(channel_info),
-                                         channels_info);
+        init_stream();
+        m_stream->meta_cash = *(const dan_MetadataCash*)src.meta();
 
         // PROCESS META //
         dan_process_metadata(m_stream);
@@ -110,13 +68,15 @@ public:
         // DATA HEADER //
         m_stream->p_header_buffer = (char*)malloc(sizeof(DAN_CLT_DATA_BLOCK_HEADER));
         m_stream->header_len = sizeof(DAN_CLT_DATA_BLOCK_HEADER);
-        dan_set_publisher_header(m_stream, sizeof(PUBLISHER_DATA_BLOCK_HEADER),
-                                 const_cast<DataSource&>(src).getHeader());
+        const void *d; const void *h;
+        src.getDataBlock(d,h);
+        dan_set_publisher_header(m_stream, sizeof(PUBLISHER_DATA_BLOCK_HEADER),h);
     }
 
     err_t addAttribute(const stream_attribute &att) {
         err_t res;
-        if(!m_stream) init();
+        init_stream();
+
         dan_MetadataCash *meta = &m_stream->meta_cash;
         stream_attribute *new_attributes;
         stream_attribute *old_attributes;

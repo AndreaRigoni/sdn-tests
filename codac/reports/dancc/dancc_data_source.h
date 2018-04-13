@@ -54,42 +54,45 @@ template < typename T, unsigned int _Dim = 1 >
 class D0WAVE {
     typedef ScalarArray<T,_Dim> VectorType;
 
-    std::vector<T> m_data[_Dim];
-    channel_info   ch_info[_Dim];
+    std::vector<VectorType> m_data;
+    channel_info            m_chinfo[_Dim];
 
 public:
 
-    D0WAVE() {}
+    D0WAVE() {
+        init_chinfo();
+    }
     D0WAVE(const size_t size) {
-        for(size_t i=0; i<_Dim; ++i) // MPL !!! //
-                m_data[i].resize(size);
+                m_data.resize(size);
+                init_chinfo();
     }
 
-    D0WAVE & operator << (const VectorType &el) {
-        for(int i=0; i<_Dim; ++i) // MPL !!! //
-            m_data[i].push_back(el(i));
+    D0WAVE & operator << (const VectorType &el) {        
+        m_data.push_back(el);
         return *this;
     }
 
-    VectorType operator ()(size_t id) {
-        VectorType out;
-        for(int i=0; i<_Dim; ++i) // MPL !!! //
-            out(i) = m_data[i](id);
-        return out;
-    }
+    VectorType & operator ()(size_t id) { return m_data.at(id); }
+    const VectorType & operator ()(size_t id) const { return m_data.at(id); }
 
-    const T *data(int i) const { return &m_data[i].front(); }
+    const T *data(int i) const { return (const T*)m_data.front(); }
 
     void setInfo(size_t id, const channel_info &info) {
-        ch_info[id] = info;
+        m_chinfo[id] = info;
     }
 
-    channel_info &info(size_t id = 0) { return ch_info[id]; }
-    const channel_info &info(size_t id = 0) const { return ch_info[id]; }
+    channel_info &info(size_t id = 0) { return m_chinfo[id]; }
+    const channel_info &info(size_t id = 0) const { return m_chinfo[id]; }
 
-    size_t size() const { return m_data[0].size(); }
+    size_t size() const { return m_data.size(); }
     size_t dim() const { return _Dim; }
+
+private:
+    void init_chinfo() {
+        for (size_t i=0; i<dim(); ++i) init_channel_info(&m_chinfo[i]);
+    }
 };
+
 
 
 
@@ -106,12 +109,9 @@ class DataSource
     typedef PUBLISHER_STATIC_CONFIG     PublisherInfo;
     typedef PUBLISHER_DATA_BLOCK_HEADER PublisherHeader;
 
-    SourceInfo    src_info;
-    PublisherInfo pbl_info;
 
     PublisherHeader data_header;
-
-//    StreamMetadata meta;
+    StreamMetadata m_meta;
 
     void * data_buffer;
     size_t data_buffer_size;
@@ -120,8 +120,8 @@ class DataSource
 
 public:
     DataSource(const char *name) {
-        SAFE_STRCPY(pbl_info.source_id, name);
-        SAFE_STRCPY(pbl_info.publisher_version, "0.1");
+        SAFE_STRCPY(publisherInfo().source_id, name);
+        SAFE_STRCPY(publisherInfo().publisher_version, "0.1");
         data_buffer = NULL;
         data_header.sampling_rate = 0;
         data_item_size = 0;
@@ -129,13 +129,12 @@ public:
 
     ~DataSource() {}
 
-    SourceInfo & sourceInfo() { return src_info; }
-    const SourceInfo & sourceInfo() const { return src_info; }
+    const StreamMetadata & meta() const { return m_meta; }
 
-    PublisherInfo & publisherInfo() { return pbl_info; }
-    const PublisherInfo & publisherInfo() const { return pbl_info; }
+    SourceInfo &    sourceInfo() { return m_meta.sourceInfo(); }
+    PublisherInfo & publisherInfo() { return m_meta.publisherInfo(); }
 
-    PublisherHeader *getHeader() { return &data_header; }
+    PublisherHeader *getPublisherHeader() { return &data_header; }
 
     size_t getDataBlock(const void *&data,const void *&header ) const {
         data = data_buffer;
@@ -178,20 +177,32 @@ void DataSource::initDataBlock(const std::vector<T> &data, size_t size = 0) {
     this->initDataBlock(size);
     data_item_size = sizeof(T);
 
-    SAFE_STRCPY(src_info.source_type,"std_vector");
-    SAFE_STRCPY(src_info.source_version,"0.1");
-    SAFE_STRCPY(src_info.source_serial_number,"201803xx");
+    SAFE_STRCPY(sourceInfo().source_type,"std_vector");
+    SAFE_STRCPY(sourceInfo().source_version,"0.1");
+    SAFE_STRCPY(sourceInfo().source_serial_number,"201803xx");
 
-    src_info.item_type = cType2danItem<T>::dan_type;
-    src_info.stream_type = streamTypeD0WAVE;
-    src_info.in_sample_meta_header_len = 0;
-    src_info.in_sample_meta_footer_len = size - data_size;
+    sourceInfo().item_type = cType2danItem<T>::dan_type;
+    sourceInfo().stream_type = streamTypeD0WAVE;
+    sourceInfo().in_sample_meta_header_len = 0;
+    sourceInfo().in_sample_meta_footer_len = size - data_size;
     memcpy(data_buffer,&data[0],size);
 
     data_header.dim1 = 1;
     data_header.dim2 = 1;
     data_header.operational_mode = 0;
     data_header.reserve = 0;
+
+    // CHANNEL INFO //
+    channel_info info;
+    memset(&info, 0, sizeof(info));
+    //
+    info.source_channel_number = 1;
+    SAFE_STRCPY(info.pv_name, "TEST_VECTOR");
+    SAFE_STRCPY(info.label, "FROM_DUMMY_DATASOURCE");
+    SAFE_STRCPY(info.stream_unit, "a.u.");
+    //
+    dan_metadata_cash_set_data(m_meta, metaTypeStdChannelInfo,
+                               sizeof(info), &info);
 }
 
 template<typename T, unsigned int D>
@@ -200,24 +211,41 @@ void DataSource::initDataBlock(const D0WAVE<T,D> &data, size_t size = 0) {
     if (data_size > size) size = data_size;
 
     this->initDataBlock(size);
-    data_item_size = sizeof(T);
-    SAFE_STRCPY(src_info.source_type,"D0WAVE");
-    SAFE_STRCPY(src_info.source_version,"0.1");
-    SAFE_STRCPY(src_info.source_serial_number,"201803xx");
+    data_item_size = D * sizeof(T);
+    data_header.sampling_rate = (double)size / sizeof(T); // one block per second //
 
-    src_info.item_type = cType2danItem<T>::dan_type;
-    src_info.stream_type = streamTypeD0WAVE;
-    src_info.in_sample_meta_header_len = 0;
-    src_info.in_sample_meta_footer_len = size - data_size;
+    SAFE_STRCPY(sourceInfo().source_type,"D0WAVE");
+    SAFE_STRCPY(sourceInfo().source_version,"0.1");
+    SAFE_STRCPY(sourceInfo().source_serial_number,"201803xx");
 
+    sourceInfo().item_type = cType2danItem<T>::dan_type;
+    sourceInfo().stream_type = streamTypeD0WAVE;
+    sourceInfo().in_sample_meta_header_len = 0;
+    sourceInfo().in_sample_meta_footer_len = 0;
 
-    for(size_t i=0; i<D; ++i)
-        memcpy(data_buffer+i*size/D,data.data(i),size/D);
+    for(size_t i=0; i<data.size(); ++i)
+        memcpy( ((T*)data_buffer+i*D), (const T*)data(i), D*sizeof(T));
 
     data_header.dim1 = 1;
     data_header.dim2 = 1;
     data_header.operational_mode = 0;
     data_header.reserve = 0;
+
+    // CHANNEL INFO //
+    channel_info info[D];
+    for(size_t i=0; i<D; ++i) {
+        info[i] = data.info(i);
+        info[i].source_channel_number = i;
+        //        sprintf(name,"TEST_VECTOR_%d",(int)i);
+        //        SAFE_STRCPY(info[i].pv_name, name);
+        //        SAFE_STRCPY(info[i].label, "FROM_DUMMY_DATASOURCE");
+        //        SAFE_STRCPY(info[i].stream_unit, "a.u.");
+    }
+    //
+    dan_metadata_cash_set_data(m_meta, metaTypeStdChannelInfo,
+                               D * sizeof(channel_info),
+                               &info[0]);
+
 }
 
 
