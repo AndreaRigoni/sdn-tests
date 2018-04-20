@@ -53,26 +53,10 @@ AX_TARGET_SELFHELP
 # //  DOCKER BUILD /////////////////////////////////////////////////////////// #
 # //////////////////////////////////////////////////////////////////////////// #
 
-AS_VAR_IF([CONFIG_ENABLE_DOCKER_BUILD],[y],[
-           AS_VAR_SET_IF([CONFIG_DOCKER_CONTAINER], 
-              [AS_VAR_SET([DOCKER_CONTAINER],[${CONFIG_DOCKER_CONTAINER}])] )
-           AS_VAR_SET_IF([CONFIG_DOCKER_IMAGE], 
-              [AS_VAR_SET([DOCKER_IMAGE],[${CONFIG_DOCKER_IMAGE}])] )
-           AS_VAR_SET_IF([CONFIG_DOCKER_URL], 
-              [AS_VAR_SET([DOCKER_URL],[${CONFIG_DOCKER_URL}])])
-          ])
+m4_sinclude(conf/kscripts/docker.ac)
+AX_DOCKER_BUILD
 
-AX_KCONFIG_VAR_WITH([DOCKER_SHARES],["set with DOCKER_SHARES"])
-AC_SUBST([DOCKER_SHARES])
-AX_KCONFIG_VAR_WITH([DOCKER_NETWORKS],["set with DOCKER_NETWORKS"])
-AC_SUBST([DOCKER_NETWORKS])
-AX_KCONFIG_VAR_WITH([DOCKER_ENTRYPOINT],["set with DOCKER_ENTRYPOINT"])
-AC_SUBST([DOCKER_ENTRYPOINT])
-AX_KCONFIG_VAR_WITH([DOCKER_PS1],["set with DOCKER_PS1"])
-AC_SUBST([DOCKER_PS1])
-
-AX_DOCKER_BUILD([bootstrap])
-
+# //////////////////////////////////////////////////////////////////////////// #
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -125,6 +109,12 @@ m4_sinclude(conf/kscripts/nodejs.ac)
 ## DOXYGEN ##
 m4_sinclude(conf/autoconf-doxygen/doxygen.ac)
 
+## EXT_LIBJIT ##
+m4_sinclude(conf/kscripts/ext_libjit.ac)
+
+## EXT_LLVM ##
+m4_sinclude(conf/kscripts/ext_llvm.ac)
+
 ## EXT_CCSTICKERS ##
 m4_sinclude(conf/kscripts/ext_ccStickers.ac)
 
@@ -137,6 +127,8 @@ m4_sinclude(conf/kscripts/ext_fio.ac)
 
 ## EXT ##
 AX_KCONFIG_MODULES([EXT],
+		  [libjit],[libjit external sources],
+		  [llvm],[llvm external sources],
 		  [ccStickers],[ccStickers external sources],
 		  [jsonrpcc],[jsonrpcc external sources],
 		  [fio],[fio external sources]
