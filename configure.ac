@@ -125,7 +125,6 @@ m4_sinclude(conf/kscripts/nodejs.ac)
 ## DOXYGEN ##
 m4_sinclude(conf/autoconf-doxygen/doxygen.ac)
 
-
 ## EXT_CCSTICKERS ##
 m4_sinclude(conf/kscripts/ext_ccStickers.ac)
 
@@ -164,7 +163,7 @@ AC_CONFIG_FILES( Makefile
 				 codac/tmp/Netlink/Makefile
 				 codac/docker/Makefile
 				 ext/Makefile
-				 node/Makefile
+				 node/Makefile				 
 				 .gitignore )
 AC_OUTPUT
 

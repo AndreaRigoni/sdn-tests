@@ -70,11 +70,9 @@ DAN_CPPFLAGS = -g -fPIC -O2 -fno-strict-aliasing -pthread -W -Wall -Wno-unused \
 
 DAN_COOMON = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)))
 
-
 AM_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
 AM_LDFLAGS  = $(DAN_LDLIBS)
 LDADD       = $(top_builddir)/ext/ccStickers/libccStickers.la
-
 
 
 bin_PROGRAMS = danraw danhdf danclt test_multich

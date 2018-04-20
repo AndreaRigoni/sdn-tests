@@ -27,19 +27,19 @@ class ArchiveClient : public Lockable
 {
 
     typedef DAN_CLIENT_CONFIG           ClientConfig;
-    typedef ARCHIVE_STREAM_CLIENT_GROUP ArchiveClientGroupInfo;
-    typedef ARCHIVE_STREAM_CLIENT       ArchiveStreamClientInfo;
+    typedef ARCHIVE_STREAM_CLIENT_GROUP ClientGroupInfo;
+    typedef ARCHIVE_STREAM_CLIENT       StreamClientInfo;
 
 
     class WriteDataBlockThread : public Thread {
 
         ArchiveClient *m_parent;
-        ArchiveStreamClientInfo *m_stream;
+        StreamClientInfo *m_stream;
         const DataSource *m_data;
         size_t m_nblocks;               
 
     public:
-        WriteDataBlockThread(ArchiveClient *parent, ArchiveStreamClientInfo *stream,
+        WriteDataBlockThread(ArchiveClient *parent, StreamClientInfo *stream,
                              const DataSource *data, size_t nblocks = 1) :
             m_parent(parent),
             m_stream(stream),
@@ -51,9 +51,9 @@ class ArchiveClient : public Lockable
     };
 
 
-    ClientConfig            client;
-    ArchiveClientGroupInfo  m_group;
-    std::vector<Stream*>     streams;
+    ClientConfig                client;
+    ClientGroupInfo             m_group;
+    std::vector<const Stream*>  streams;
 public:
 
     ArchiveClient(const char *name) {
@@ -64,8 +64,8 @@ public:
 
     }
 
-    ArchiveClientGroupInfo &group() { return m_group; }
-    const ArchiveClientGroupInfo &group() const { return m_group; }
+    ClientGroupInfo &group() { return m_group; }
+    const ClientGroupInfo &group() const { return m_group; }
 
     void setServer(const char *name, const char *port) {
         SAFE_STRCPY(client.subscriber_id, m_group.name);
@@ -79,7 +79,15 @@ public:
         m_group.connected = 0;
     }
 
-    void addDataStream(Stream &stream) {
+    size_t getStreamInfoSize() const { return m_group.n_streams; }
+
+    StreamClientInfo *getStreamInfo(size_t id) {
+        assert(id<m_group.n_streams);
+        return dan_get_archive_stream(&m_group, id);
+        // return &m_group.p_streams[id];
+    }
+
+    void addDataStream(const Stream &stream) {
         streams.push_back(&stream);
         if(m_group.n_streams) free(m_group.p_streams);
         m_group.p_streams = (ARCHIVE_STREAM_CLIENT *)malloc(sizeof(ARCHIVE_STREAM_CLIENT) * streams.size());

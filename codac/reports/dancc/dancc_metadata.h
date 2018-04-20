@@ -60,6 +60,8 @@ template < class T > class convertMeta {
 _convertMetaDataType(SOURCE_STATIC_CONFIG, metaTypeSourceStaticConfig, init_source_static_config);
 _convertMetaDataType(PUBLISHER_STATIC_CONFIG, metaTypeStaticConfig, init_publisher_static_config);
 _convertMetaDataType(SUBSCRIBER_STATIC_CONFIG, metaTypeSubscriber, init_subscriber_static_config);
+_convertMetaDataType(STREAM_OPTIMIZATION, metaTypeStreamOptimize, init_stream_optimization);
+_convertMetaDataType(STREAM_DEBUG, metaTypeDebug, init_stream_debug);
 // FINIRE //
 #undef _convertMetaDataType
 
@@ -77,18 +79,12 @@ public:
     StreamMetadata() : m_meta(new dan_MetadataCash)
     {
         dan_metadata_cash_init(m_meta);
+        convertMeta<PUBLISHER_STATIC_CONFIG>::getInfo(m_meta);
+        convertMeta<SUBSCRIBER_STATIC_CONFIG>::getInfo(m_meta);
+        convertMeta<STREAM_OPTIMIZATION>::getInfo(m_meta);
+        convertMeta<STREAM_DEBUG>::getInfo(m_meta);
 
-        PUBLISHER_STATIC_CONFIG pbl;
-        init_publisher_static_config(&pbl);
-        setInfo(pbl);
-
-        SUBSCRIBER_STATIC_CONFIG subscriber_conf;
-        init_subscriber_static_config(&subscriber_conf);
-        get_subscriber_static_config(&subscriber_conf);
-        setInfo(subscriber_conf);
     }
-
-
 
     operator dan_MetadataCash *() { return m_meta; }
     operator const dan_MetadataCash *() const { return m_meta; }
@@ -104,6 +100,8 @@ public:
 
     PublisherInfo & publisherInfo() { return *convertMeta<PublisherInfo>::getInfo(m_meta); }
     SourceInfo &    sourceInfo() { return *convertMeta<SourceInfo>::getInfo(m_meta); }
+
+
 
 };
 

@@ -78,7 +78,7 @@ struct nlsock_link_stats {
     int fd;
     int dev_id;
     struct {
-        struct nlmsghdr n;
+        struct nlmsghdr  n;
         struct ifinfomsg r;
     } req;
     char buf[NL_LINK_BUF_SIZE];
@@ -192,7 +192,7 @@ int nl_link_getstats(struct nlsock_link_stats *nlsk, struct rtnl_link_stats *sta
         if (req_len<0 || len>pos) { break; }
         if (!NLMSG_OK(nlmp, pos)) { break; }
 
-        rtmp = (struct ifinfomsg *)NLMSG_DATA(nlmp);
+        rtmp  = (struct ifinfomsg *)NLMSG_DATA(nlmp);
         rtatp = (struct rtattr *)IFLA_RTA(rtmp);
         int rtattrlen = IFLA_PAYLOAD(nlmp);
 

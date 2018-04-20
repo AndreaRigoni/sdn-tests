@@ -31,21 +31,23 @@ $(CODAC_NAME)_entry.sh:
 	@ cat > $@ << EOF
 	*
 	!$(CODAC_NAME).tar
-	!Dockerfile
+	!$(DOCKERFILE)
 	!$(CODAC_NAME)_entry.sh
 	EOF
 
+DOCKERFILE = Dockerfile_v$(CODAC_VERSION)
+
 .PHONY: Dockerfile
-Dockerfile: $(CODAC_NAME)_entry.sh .dockerignore
+$(DOCKERFILE): $(CODAC_NAME)_entry.sh .dockerignore
 	@ cat > $@ << EOF
 	FROM scratch
 	ADD $(CODAC_NAME).tar /
 	COPY $(CODAC_NAME)_entry.sh /root
-	ENTRYPOINT /root/$(CODAC_NAME)_entry.sh
+# ENTRYPOINT /root/$(CODAC_NAME)_entry.sh
 	EOF
 
 docker-image: ##@codac build docker from valid tar file
-docker-image: Dockerfile $(CODAC_NAME).tar
+docker-image: $(DOCKERFILE) $(CODAC_NAME).tar
 	docker build -t $(CODAC_NAME):$(VERSION) -f $< .
 
 
@@ -54,9 +56,11 @@ docker-image: Dockerfile $(CODAC_NAME).tar
 ## ////////////////////////////////////////////////////////////////////////// ##
 
 MOSTLYCLEANFILES = Dockerfile $(DOWNLOADS)
+clean-all: ##@codac remove everything .. tar img and the docker installe instance
 clean-all:
 	docker rmi $(CODAC_LIBGUEST_DKIMG);
 	rm -rfi $(CODAC_NAME).tar $(CODAC_NAME).img
 
-
+print:
+	echo $(CODAC_NAME)
 

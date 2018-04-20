@@ -47,7 +47,9 @@ static size_t initSine(void *data, size_t size, double period) {
 
 
 
-
+////////////////////////////////////////////////////////////////////////////////
+//  D0WAVE  ////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 template < typename T, unsigned int _Dim = 1 >
@@ -156,18 +158,10 @@ public:
 };
 
 
+////////////////////////////////////////////////////////////////////////////////
+//  VECTOR INIT  ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-
-void DataSource::initDataBlock(size_t size) {
-    if(data_buffer_size != size) {
-        if(data_buffer) free(data_buffer);
-        data_buffer = malloc(size);
-        data_buffer_size = size;
-        data_item_size = 1;
-        if(data_header.sampling_rate <= .0)
-            data_header.sampling_rate = (double)size; // one block per second //
-    }
-}
 
 template<typename T>
 void DataSource::initDataBlock(const std::vector<T> &data, size_t size = 0) {
@@ -204,6 +198,13 @@ void DataSource::initDataBlock(const std::vector<T> &data, size_t size = 0) {
     dan_metadata_cash_set_data(m_meta, metaTypeStdChannelInfo,
                                sizeof(info), &info);
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+//  D0WAVE INIT  ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 
 template<typename T, unsigned int D>
 void DataSource::initDataBlock(const D0WAVE<T,D> &data, size_t size = 0) {

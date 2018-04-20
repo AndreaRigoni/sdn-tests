@@ -76,7 +76,8 @@ DAN_CPPFLAGS = -g -fPIC -O2 -fno-strict-aliasing -pthread -W -Wall -Wno-unused \
 lib_LTLIBRARIES = libdancc.la
 
 libdancc_la_SOURCES  = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)) \
-				 dancc_data_source.cpp
+						dancc_data_source.cpp \
+						dancc_stream.cpp
 
 libdancc_la_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
 libdancc_la_LDFLAGS  = $(DAN_LDLIBS)

@@ -153,3 +153,7 @@ codac/tmp/Netlink
 
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-archiver-writer/src/main/c/include
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-archiver-reader/src/main/c++/include
+build/ext/ccStickers/src/Net
+build/ext/ccStickers/src/Net/testing
+codac/reports/dan_monitor
+ext

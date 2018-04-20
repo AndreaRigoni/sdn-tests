@@ -101,16 +101,11 @@ int main(int argc, char *argv[])
             bw_MA.add(tp_mi);
             bw.Push(tp_mi);
             if (time.GetElapsed_ms() > (100)*tcnt) {
-                lat_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                  dt/count,0));
-                bwm_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                  tp_all,0));
-                bw_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                 tp_i,0));
-                bw_MI_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                    tp_mi,0));
-                bw_MA_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(),
-                                                    bw_MA.mean(),bw_MA.rms()));
+                lat_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(), dt/count,0));
+                bwm_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(), tp_all,0));
+                bw_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(), tp_i,0));
+                bw_MI_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(), tp_mi,0));
+                bw_MA_curve.AddPoint(Curve2D::Point(time.GetElapsed_s(), bw_MA.mean(),bw_MA.rms()));
                 tcnt++;
             }
         }
