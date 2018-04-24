@@ -78,7 +78,7 @@ public:
 
     StreamMetadata() : m_meta(new dan_MetadataCash)
     {
-        dan_metadata_cash_init(m_meta);
+        dan_metadata_cash_init(m_meta,DM_BLOCK2D_VAR);
         convertMeta<PUBLISHER_STATIC_CONFIG>::getInfo(m_meta);
         convertMeta<SUBSCRIBER_STATIC_CONFIG>::getInfo(m_meta);
         convertMeta<STREAM_OPTIMIZATION>::getInfo(m_meta);

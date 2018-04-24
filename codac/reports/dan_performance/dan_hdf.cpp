@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 
     // Metadata Cash init //
     dan_MetadataCash stream_meta;
-    dan_metadata_cash_init(&stream_meta);
+    dan_metadata_cash_init(&stream_meta,DM_BLOCK2D_VAR);
 
     // DEVICE SETUP //
     device_init(&stream_meta);

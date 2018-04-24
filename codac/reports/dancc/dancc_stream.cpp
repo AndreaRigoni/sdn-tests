@@ -10,7 +10,7 @@ err_t dancc::Stream::init_stream() {
     if (!m_stream) {
         m_stream = (ARCHIVE_STREAM_CLIENT*)malloc(sizeof(ARCHIVE_STREAM_CLIENT));
         dan_MetadataCash c_meta;
-        dan_metadata_cash_init(&c_meta);
+        dan_metadata_cash_init(&c_meta,DM_BLOCK2D_VAR);
         res = dan_create_archive_stream(m_stream, sizeof(dan_MetadataCash),&c_meta);
     }
     return res;

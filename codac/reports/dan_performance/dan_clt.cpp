@@ -70,7 +70,7 @@ class danclt_Options : public Options {
 int main(int argc, char *argv[])
 {
     INIT_ERR;
-    err_t res;
+    err_t err;
     danclt_Options opt(argc,argv);
 
     // Profiler instance //
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 
     // Metadata Cash init //
     dan_MetadataCash stream_meta;
-    dan_metadata_cash_init(&stream_meta);
+    dan_metadata_cash_init(&stream_meta,DM_BLOCK2D_VAR);
 
     // DEVICE SETUP //
     device_init(&stream_meta);
@@ -137,10 +137,8 @@ int main(int argc, char *argv[])
 
     int meta_size;
     void *p_meta = dan_metadata_cash_get_all_data(&stream_meta, &meta_size);
-    res = dan_create_archive_stream_in_group(&group, 0, meta_size, p_meta);
-
-
-
+    err = dan_create_archive_stream_in_group(&group, 0, meta_size, p_meta);
+    if(err) { printf("error creating stream in group\n"); return 1; }
 
     dan_open_stream_group ( &group, &config_clt );
 

@@ -255,10 +255,13 @@ under the License.
           <value>!true</value>
         </property>
       </activation>
-      <properties>
+
+	  <properties>
         <iter>true</iter>
 		<svnkit.version>1.9.0</svnkit.version>
+		<release>local</release>
       </properties>
+
 	  <repositories>
         <repository>
           <snapshots>
@@ -269,10 +272,9 @@ under the License.
 		  <url>http://repo1.maven.org:80/maven2</url>
         </repository>
         <repository>
-          <snapshots />
-          <id>snapshots</id>
-          <name>ITER Central Snapshot Repository</name>
-		  <url>http://repo1.maven.org:80/maven2</url>
+		  <id>TmateSoft</id>
+		  <name>TmateSoft</name>
+		  <url>https://maven.tmatesoft.com/content/repositories/releases/</url>
         </repository>
 	  </repositories>
       <pluginRepositories>
@@ -289,6 +291,11 @@ under the License.
 		  <id>snapshots</id>
 		  <name>ITER Central Snapshot Repository</name>
 		  <url>https://repo1.maven.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
+		<id>TmateSoft</id>
+		<name>TmateSoft</name>
+		<url>https://maven.tmatesoft.com/content/repositories/releases/</url>
 		</pluginRepository>
 
       </pluginRepositories>

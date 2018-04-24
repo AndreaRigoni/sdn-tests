@@ -19,7 +19,12 @@ dialog --backtitle "Select units" --checklist "Select option:" 50 80 50 $list 2>
 
 for f in $(cat ./.list.tmp); do
  echo "retriving $f"
+ echo svn --username ${USR} co $URL/$DIR/$f/$BRA $f
  svn --username ${USR} co $URL/$DIR/$f/$BRA $f
+ if [ $? -ne 0 ]; then
+  echo "repo $f not found. Looking in trunk..."
+  svn --username ${USR} co $URL/$DIR/$f/trunk $f
+ fi
 done
 
 

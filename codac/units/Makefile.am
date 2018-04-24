@@ -8,7 +8,6 @@ include $(srcdir)/../CodacDan.mk
 ## ////////////////////////////////////////////////////////////////////////// ##
 
 NAME     ?= $(lastword $(IC_UNITS))
-SVN_BRA  = branches/codac-core-5.4
 
 IC_UNITS  = \
 			m-DAN-sample \
@@ -17,20 +16,49 @@ IC_UNITS  = \
 DEV_UNITS = \
 			m-maven-iter-settings \
 			m-codac-unit-api \
-			m-maven-iter-plugin
+			m-maven-iter-plugin \
+			m-dan-common \
+			m-dan-daq \
+			m-collectd-ccs \
+			m-collector-lib \
+			m-dan-archiver-reader \
+			m-dan-archiver-writer
+
+
 
 m_maven_iter_settings_SVN_DEP =
 
 m_codac_unit_api_SVN_DEP = m-maven-iter-settings
 
+
+m_maven_iter_plugin_SVN_BRA = trunk
 m_maven_iter_plugin_SVN_DEP = m-maven-iter-settings \
 							  m-codac-unit-api
 
+# // DO NOT USE TRUNK FOR 6.0 //
+
+#m_collector_lib_SVN_DEP = m-collectd-ccs
+#m_dan_archiver_writer_SVN_DEP = m-collector-lib
+
+#m_dan_daq_SVN_DEP = m-collector-lib
+#m_dan_daq_SVN_BRA = trunk
+
+#m_dan_daq_SVN_BRA = trunk
+m_dan_daq_SVN_DEP = m-dan-common
+
+#m_dan_common_SVN_BRA = trunk
 m_dan_common_SVN_DEP = m-codac-unit-api \
 					   m-maven-iter-plugin
 
+# m_DAN_sample_SVN_BRA = trunk
 m_DAN_sample_SVN_DEP = m-maven-iter-settings \
 					   m-maven-iter-plugin
+
+
+
+
+
+
 
 VPATH = .
 
@@ -42,6 +70,7 @@ $(DEV_UNITS):
 
 .PHONY: download-all
 download-all: ##@svnpub perform svn checkout on all deps
+download-all: $(NAME) ##@svnpub perform svn checkout on all deps
 	@ $(foreach x,$(SVN_DEP),$(MAKE) $x;)
 
 all: $(NAME) mvn-compile
@@ -95,20 +124,32 @@ $(MAVEN_HOME):
 mvn-%-dep: ##@mvn perform install on all deps only
 	@ $(foreach x,$(SVN_DEP),$(MAKE) $(subst -dep,-all,$@) NAME=$x;)
 
+mvn-install-all: USER=root
 mvn-%-all: ##@mvn perform install on all deps
-	@ $(foreach x,$(SVN_DEP),$(MAKE) $@ NAME=$x;) \
+	@ $(foreach x,$(SVN_DEP),$(MAKE) $@ NAME=$x &&) \
 	  $(MAKE) $(subst -all,,$@)
 
 mvn-%: $(NAME) $(MAVEN_HOME)
 	@ $(info )
-	  $(info Performing target: $(subst mvn-,,$@) on unit: $(NAME) )
+	  $(info Performing mvn $(subst mvn-,,$@) on unit: $(NAME) )
 	  $(info ----------------------------------------------------  )
 	  $(info )
 	  cd $(NAME); \
-	  mvn  $(subst mvn-,,$@) -s $(MVN_SETTINGS) $(MVN_ARGS)
+	  mvn $(subst mvn-,,$@) -s $(MVN_SETTINGS) $(MVN_ARGS)
 
 
+mvn-install: USER=root
+mvn-install: $(NAME) $(MAVEN_HOME)
+	@ $(info )
+	  $(info Performing mvn $(subst mvn-,,$@) on unit: $(NAME) as root )
+	  $(info --------------------------------------------------------  )
+	  $(info )
+	@ cd $(NAME); \
+	  mvn $(subst mvn-,,$@) -s $(MVN_SETTINGS) $(MVN_ARGS) && \
+	  rpm -Uvh --force target/*.rpm ||:
 
 
+shell:
+	@ bash -l
 
 
