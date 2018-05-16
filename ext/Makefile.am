@@ -37,11 +37,6 @@ ext-: ##@ext enter ext module with $TARGET
 ext-%: %/Makefile
 	@ $(MAKE) $(AM_MAKEFLAGS) -C $(subst ext-,,$@) $(TARGET)
 
-all: TARGET = all
-all: $(EXT_MODULES)
-
-clean: TARGET = clean
-clean: ext-libjit
 
 
 ext-list: ##@ext list defined ext modules
@@ -84,17 +79,11 @@ fio:    ##@ext download fio sources
 fio_URL = $(FIO_URL)
 $(call _ext_configure,fio)
 
-
-ext-nodejs-node: AM_MAKEFLAGS += -j$(MAKE_PROCESS)
-nodejs-node:
-nodejs_node_URL = $(NODEJS_NODE_URL)
-nodejs_node_CONFIGURE_ARGS = --shared
-$(call _ext_configure,nodejs-node)
-
-qwt: ##@ext download qwt
-DOWNLOADS += qwt
-qwt_URL = git://github.com/AndreaRigoni/qwt.git
-
+#ext-nodejs-node: AM_MAKEFLAGS += -j$(MAKE_PROCESS)
+#nodejs-node:
+#nodejs_node_URL = $(NODEJS_NODE_URL)
+#nodejs_node_CONFIGURE_ARGS = --shared
+#$(call _ext_configure,nodejs-node)
 
 hdf5: ##@ext download hdf5
 DOWNLOADS += hdf5
@@ -102,14 +91,25 @@ hdf5_URL = git://github.com/live-clones/hdf5.git
 $(call _ext_autogen,hdf5)
 $(call _ext_configure,hdf5)
 
+qwt: ##@ext download qwt
+DOWNLOADS += qwt
+qwt_URL = git://github.com/AndreaRigoni/qwt.git
+qwt_PRO = qwt/qwt/qwt.pro
+#qwt/qwt/Makefile: $(qwt_PRO)
+#	@ $(QMAKE_BINARY) $(foreach x,$(QMAKE_CONFIG),CONFIG+=$x ) -o $(notdir $@) $<
+
+.PHONY: ext-qwt
+ext-qwt: $(qwt_PRO) # qwt/qwt/Makefile
+	@ $(info build qwt)
+	  $(QMAKE_BINARY) $(foreach x,$(QMAKE_CONFIG),CONFIG+=$x ) -o qwt/qwt/Makefile $<; \
+	  $(MAKE) -C qwt/qwt -j6 $(TARGET)
+
+shell:
+	@ bash -l
 
 
-
-#PRO = qwt/qwt/qwt.pro
-#export QT_X11_NO_MITSHM = 1
-#ext-qwt: $(TARGET)
-#ext-qwt: qwt/qwt/Makefile
-#	@ $(info help)
-
+.SECONDEXPANSION:
+all: TARGET = all
+all: $(EXT_MODULES)
 
 

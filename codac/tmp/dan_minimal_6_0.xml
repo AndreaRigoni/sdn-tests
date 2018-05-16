@@ -1,0 +1,42 @@
+<danApi >
+	<version >1.0.0</version>
+	<ICprogram name="DummySrc" >
+		<source name="DummySrc" >
+			<itemDanType >danFloat</itemDanType>
+			<maxTransferRate >100000</maxTransferRate>
+			<advancedSource >
+				<streamType >DATA_D0</streamType>
+				<dataModel >DM_BLOCK2D_VAR</dataModel>
+				<checkPolicy >CHECK_AND_OVERWRITE</checkPolicy>
+				<queueSize >1000</queueSize>
+				<profMonitoring >1</profMonitoring>
+				<timeFormat >UTC</timeFormat>
+			</advancedSource>
+			<deviceInfo >
+				<deviceName >DSOURCE1</deviceName>
+				<deviceVersion >v1.3</deviceVersion>
+				<operationalMode >0</operationalMode>
+				<manufactureCode >N1134342</manufactureCode>
+			</deviceInfo>
+			<channelsInfo >
+				<channel number="0" variable="EC-DAN-ACQ:DUMMY-SIGNAL"
+				   label="EC-DAN-ACQ:DUMMY-SIGNAL" status="ENABLE" >
+					<calibration sourceUnit="V" calibratedUnit=""
+				   calibrationType="raw" ></calibration>
+				</channel>
+			</channelsInfo>
+		</source>
+		<danStreamer name="Test_STREAMER" >
+			<link >ALL</link>
+			<internal >
+				<danInterface ></danInterface>
+				<servers >
+					<policy >IF_FAIL_NEXT</policy>
+					<server >${DAN_ARCHIVE_MASTER}</server>
+					<server >${DAN_ARCHIVE_SLAVE}</server>
+				</servers>
+			</internal>
+		</danStreamer>
+	</ICprogram>
+</danApi>
+

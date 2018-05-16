@@ -12,22 +12,23 @@ dan-api-init:   ##@dan DAN-API initialize unit PCF config
 dan-api-reload: ##@dan DAN-API reload unit PCF config
 dan-api-init dan-api-reload:
 	- $(call _env_set) \
-	  $(foreach x,$(CU_PCF_DANCONF),nohup $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@) $x;)
+	  $(foreach x,$(CU_PCF_DANCONF) $($(call _flt,$(NAME))_DANCFG),$(DAN_APITOOL_BIN) api $(subst dan-api-,,$@) $x;)
 
 dan-api-close:  ##@dan DAN-API close all active API
 dan-api-status: ##@dan DAN-API return status
 dan-api-close dan-api-status:
 	@ $(call _env_set) \
-	  $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@)
+	  $(info $(call _flt,$(NAME))_ICPROG = $($(call _flt,$(NAME))_ICPROG))
+	  $(DAN_APITOOL_BIN) api $(subst dan-api-,,$@) $($(call _flt,$(NAME))_ICPROG)
 
 
-SUBSCRIBERS ?= ALL
+SUBSCRIBERS ?= all
 dan-st-start: ##@dan STREAMER start ${SUBSCRIBERS}
 dan-st-stop: ##@dan STREAMER stop ${SUBSCRIBERS}
 dan-st-restart: ##@dan STREAMER restart ${SUBSCRIBERS}
 dan-st-%:
 	@ $(call _env_set) \
-	  $(DAN_APITOOL_BIN) streamer $(subst dan-st-,,$@) $(SUBSCRIBERS)
+	  $(DAN_APITOOL_BIN) streamer $(subst dan-st-,,$@) $($(call _flt,$(NAME))_ICPROG) $(SUBSCRIBERS)
 
 dan-aw-start:   ##@dan ARCHIVER start
 dan-aw-restart: ##@dan ARCHIVER restart

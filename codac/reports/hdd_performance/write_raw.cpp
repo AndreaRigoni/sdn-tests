@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     Histogram<double> bw("bw",400,0,4E3);
 
 
-    static const size_t MI_WINDOW = 400;
+    static const size_t MI_WINDOW = 1400;
     StatUtils::MI     lat_MI(MI_WINDOW);
     StatUtils::MA     bw_MA(MI_WINDOW);
 

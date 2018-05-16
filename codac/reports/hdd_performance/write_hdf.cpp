@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     hdfsrv_close_file(&file);
 
-    read_out();
+    // read_out();
 
     return 0;
 }

@@ -8,7 +8,6 @@ QT  += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
 TARGET = dan_monitor
 TEMPLATE = app
 
@@ -24,10 +23,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 VPATH = $$(VPATH)
 
-SOURCES += main.cpp mainwindow.cpp cpustat.cpp
-HEADERS += mainwindow.h cpustat.h
-FORMS += mainwindow.ui
+SOURCES += main.cpp mainwindow.cpp cpustat.cpp icbrowser.cpp ddcmodel.cpp icbstreamer.cpp vpstreamers.cpp
+HEADERS += mainwindow.h cpustat.h icbrowser.h ddcmodel.h icbstreamer.h vpstreamers.h
+FORMS += mainwindow.ui icbrowser.ui icbstreamer.ui
 
-LIBS += -L$$(top_builddir)/ext/qwt/qwt/lib -lqwt $$(top_builddir)/ext/ccStickers/.libs/libccStickers.a
-INCLUDEPATH += $$(top_builddir)/ext/qwt/qwt/src $$(top_builddir)/ext/ccStickers/src
-DEPENDPATH  += $$(top_builddir)/ext/qwt/qwt/src
+
+LIBS += -L$(top_builddir)/ext/qwt/qwt/lib -lqwt $$(top_builddir)/ext/ccStickers/.libs/libccStickers.a
+LIBS += $(LDLIBS)
+unix:INCLUDEPATH += $(top_builddir)/ext/qwt/qwt/src $(top_builddir)/ext/ccStickers/src $(DAN_INCLUDE_DIRS)
+DEPENDPATH  += $(top_builddir)/ext/qwt/qwt/src
+
+

@@ -1,0 +1,24 @@
+FROM scratch
+
+ARG CODAC_NAME=codac_v5
+ARG ENTRY_POINT=${CODAC_NAME}_entry.sh
+
+ADD ${CODAC_NAME}.tar /
+COPY ${ENTRY_POINT} /root/${CODAC_NAME}_entry.sh
+# ENTRYPOINT /root/${CODAC_NAME}_entry.sh
+
+
+# adds Epel [not working]
+# RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+# adds Epel [not tested yet]
+# wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm
+# rpm -ivh epel-release-7-9.noarch.rpm
+
+
+# install qt-devel
+RUN yum install -y qt5-qtbase-devel graphviz
+
+# remove plymouth that breaks init in docker
+RUN yum remove  -y plymouth
+

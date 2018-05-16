@@ -36,7 +36,10 @@
 #include <sdn.h>
 #include <tcn.h>
 
-#include <danApi.h>
+
+#include <dan/dan_Admin.h>
+#include <dan/dan_DataCore.h>
+#include <dan/dan_Monitor.h>
 
 #include <pthread.h>
 
@@ -64,101 +67,101 @@ static const char TERM_CHAR_UP[] = "\e[A";
 
 
 
-///
-/// \brief The MonitorThread class
-///
-class MonitorThread : public Thread {
-    dan_DataCore &dc;
-    static const size_t update_val = 10;
-    size_t pos;
-    ConditionVar wc;
-    dan_Monitor monitor;
+/////
+///// \brief The MonitorThread class
+/////
+//class MonitorThread : public Thread {
+//    dan_DataCore &dc;
+//    static const size_t update_val = 10;
+//    size_t pos;
+//    ConditionVar wc;
+//    dan_Monitor monitor;
 
-public:
-    MonitorThread(dan_DataCore &dc) :
-        dc(dc),
-        pos(0),
-        wc(),
-        monitor(NULL)
-    {
-        int nsub = dc->datacoreInfo->nSubscribers;
-        int nsrc = dc->datacoreInfo->nSources;
+//public:
+//    MonitorThread(dan_DataCore &dc) :
+//        dc(dc),
+//        pos(0),
+//        wc(),
+//        monitor(NULL)
+//    {
+//        int nsub = dc->datacoreInfo->nSubscribers;
+//        int nsrc = dc->datacoreInfo->nSources;
 
-        for (int i=0; i<nsub; ++i) {
-            st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
-            std::cout << "sub: " << si.name << "\n";
-            si.ovfErrors = 0;
-            // initialize profilers //
-            dan_initProfiler(&si.latency,update_val);
-            dan_initProfiler(&si.throu,update_val);
-        }
-        for (int i=0; i<nsrc; ++i) {
-            st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
-            std::cout << "src: " << si.name << "\n";
-            // initialize profilers //
-            dan_initProfiler(&si.wlat,update_val);
-            dan_initProfiler(&si.throu,update_val);
-        }
-    }
+//        for (int i=0; i<nsub; ++i) {
+//            st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
+//            std::cout << "sub: " << si.name << "\n";
+//            si.ovfErrors = 0;
+//            // initialize profilers //
+//            dan_initProfiler(&si.latency,update_val);
+//            dan_initProfiler(&si.throu,update_val);
+//        }
+//        for (int i=0; i<nsrc; ++i) {
+//            st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
+//            std::cout << "src: " << si.name << "\n";
+//            // initialize profilers //
+//            dan_initProfiler(&si.wlat,update_val);
+//            dan_initProfiler(&si.throu,update_val);
+//        }
+//    }
 
-    ///
-    /// \brief add_monitor
-    /// \param src_name   Monitor Source (and set NULL the other)
-    /// \param subscrib_name Monitor Subscriber (and set NULL the other)
-    ///
-    void set_monitor(const char *src_name, const char *subscrib_name) {
-        this->monitor = dan_monitor_initMonitor(dc,src_name,subscrib_name);
-    }
+//    ///
+//    /// \brief add_monitor
+//    /// \param src_name   Monitor Source (and set NULL the other)
+//    /// \param subscrib_name Monitor Subscriber (and set NULL the other)
+//    ///
+//    void set_monitor(const char *src_name, const char *subscrib_name) {
+//        this->monitor = dan_monitor_initMonitor(dc,src_name,subscrib_name);
+//    }
 
-    MonitorThread& operator ++() { if(pos++%update_val == 0) wc.notify(); return *this; }
+//    MonitorThread& operator ++() { if(pos++%update_val == 0) wc.notify(); return *this; }
 
-    virtual void InternalThreadEntry() {
-        while(1) {
-            wc.wait(); // wait for external call to wake up //
-            int nsub = dc->datacoreInfo->nSubscribers;
-            int nsrc = dc->datacoreInfo->nSources;
-            int line_waste = nsub + nsrc;
-            std::cout << ",-----------------------\n"; line_waste += 1;
-            for (int i=0; i<nsub; ++i) {
-                st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
-                double lat = dan_profiler_getAverageValue(&si.latency);
-                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
-                std::cout << "s: " << si.name << " "
-                          << "l: " << lat << " "
-                          << "t: " << tpt << "[MBps] "
-                          << "e: " << si.ovfErrors << " "
-                          << "        \n";
-            }
-            for (int i=0; i<nsrc; ++i) {
-                st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
-                double lat = dan_profiler_getAverageValue(&si.wlat);
-                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
-                std::cout << "s: " << si.name << " "
-                          << "l: " << lat << "[ms] "
-                          << "t: " << tpt << "[MBps] "
-                          << "        \n";
-            }
-            if(this->monitor) {
-                dan_Monitor mon = this->monitor;
-                std::cout
-                          // Number of free bytes that are available in the DAQBuffer
-                          << "sr dataFree   " << dan_monitor_source_dataFree(mon)/1024 << " [KB]        \n"
+//    virtual void InternalThreadEntry() {
+//        while(1) {
+//            wc.wait(); // wait for external call to wake up //
+//            int nsub = dc->datacoreInfo->nSubscribers;
+//            int nsrc = dc->datacoreInfo->nSources;
+//            int line_waste = nsub + nsrc;
+//            std::cout << ",-----------------------\n"; line_waste += 1;
+//            for (int i=0; i<nsub; ++i) {
+//                st_dan_Subscriber_Info &si = dc->datacoreInfo->subscribers_info[i];
+//                double lat = dan_profiler_getAverageValue(&si.latency);
+//                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
+//                std::cout << "s: " << si.name << " "
+//                          << "l: " << lat << " "
+//                          << "t: " << tpt << "[MBps] "
+//                          << "e: " << si.ovfErrors << " "
+//                          << "        \n";
+//            }
+//            for (int i=0; i<nsrc; ++i) {
+//                st_dan_Source_Info &si = dc->datacoreInfo->sources_info[i];
+//                double lat = dan_profiler_getAverageValue(&si.wlat);
+//                double tpt = dan_profiler_getAverageValue(&si.throu)/1024/1024;
+//                std::cout << "s: " << si.name << " "
+//                          << "l: " << lat << "[ms] "
+//                          << "t: " << tpt << "[MBps] "
+//                          << "        \n";
+//            }
+//            if(this->monitor) {
+//                dan_Monitor mon = this->monitor;
+//                std::cout
+//                          // Number of free bytes that are available in the DAQBuffer
+//                          << "sr dataFree   " << dan_monitor_source_dataFree(mon)/1024 << " [KB]        \n"
 
-                          // Number of free datablock reference that are available in the queue
-                          << "sr queueFree  " << dan_monitor_source_queueFree(mon) << " [bref]       \n";
+//                          // Number of free datablock reference that are available in the queue
+//                          << "sr queueFree  " << dan_monitor_source_queueFree(mon) << " [bref]       \n";
 
-                          // total throughput in bytes/second associated to the source that is monitored by dMon
-                          // << "sr throughput " << dan_monitor_source_thoughput(mon) << "        \n";
-                line_waste += 2;
-            }
-            std::cout << "`-----------------------\n"; line_waste += 1;
+//                          // total throughput in bytes/second associated to the source that is monitored by dMon
+//                          // << "sr throughput " << dan_monitor_source_thoughput(mon) << "        \n";
+//                line_waste += 2;
+//            }
+//            std::cout << "`-----------------------\n"; line_waste += 1;
 
-            for(int i=0; i<line_waste;++i) {
-                std::cout << TERM_CHAR_UP;
-            }
-        }
-    }
-};
+//            for(int i=0; i<line_waste;++i) {
+//                std::cout << TERM_CHAR_UP;
+//            }
+//        }
+//    }
+//};
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,9 +397,9 @@ int main(int argc, char **argv)
     /// LOOP ///
 
     // MONITOR //
-    MonitorThread mt(dc);
+//    MonitorThread mt(dc);
 //    mt.set_monitor(DummySrc,0);
-    mt.StartThread();
+//    mt.StartThread();
 
     size_t pos = 0;
     while(!__terminate && ( tcn_wait_until(till,0) == TCN_SUCCESS )
@@ -436,7 +439,7 @@ int main(int argc, char **argv)
 
         // log_info("[GEN] pkt-loop ... \n");
         // monitor update //
-        ++mt;
+//        ++mt;
 
         // ACQ interval
         double dt_ns = (double)chunkSize / gen_trate * 1E9;

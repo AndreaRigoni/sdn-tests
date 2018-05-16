@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>314</width>
-    <height>341</height>
+    <width>806</width>
+    <height>576</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,7 +34,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="workspace">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -47,6 +47,44 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolBox" name="toolBox">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="ICBrowser">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>562</width>
+            <height>469</height>
+           </rect>
+          </property>
+          <attribute name="label">
+           <string>IC browse</string>
+          </attribute>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -56,7 +94,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>314</width>
+     <width>806</width>
      <height>19</height>
     </rect>
    </property>
@@ -64,14 +102,38 @@
     <property name="title">
      <string>file</string>
     </property>
+    <addaction name="actionLoad_from_file"/>
     <addaction name="actionquit"/>
    </widget>
+   <widget class="QMenu" name="menuview">
+    <property name="title">
+     <string>view</string>
+    </property>
+    <addaction name="actioncpu_load"/>
+    <addaction name="actionstremers_throughput"/>
+   </widget>
    <addaction name="menufile"/>
+   <addaction name="menuview"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionquit">
    <property name="text">
     <string>quit</string>
+   </property>
+  </action>
+  <action name="actionLoad_from_file">
+   <property name="text">
+    <string>Load from file</string>
+   </property>
+  </action>
+  <action name="actioncpu_load">
+   <property name="text">
+    <string>cpu load</string>
+   </property>
+  </action>
+  <action name="actionstremers_throughput">
+   <property name="text">
+    <string>stremers throughput</string>
    </property>
   </action>
  </widget>
@@ -85,8 +147,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>35</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>156</x>

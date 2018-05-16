@@ -22,7 +22,7 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/codac/CodacDan.mk
 
-_LIBS = ca dan_api dan_client_api dan_stream xml2 log sdn rt pthread tcn
+_LIBS = ca dan_api dan_client_api dan_base dan_stream xml2 log sdn rt pthread tcn
 LIBRARY_DIRS =
 
 # DAN_DAQ_DIR = $(top_srcdir)/codac/units/
@@ -53,17 +53,37 @@ AM_LDFLAGS  = $(LDLIBS)
 bin_PROGRAMS    = monitor
 monitor_SOURCES = monitor.cpp
 
+bin_PROGRAMS = ic_dump
+ic_dump_SOURCES = ic_dump.cpp
+ic_dump_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/codac/units/m-dan-daq/src/main/c/dan_api
+
+
+
 bin_PROGRAMS   += pv_test
 pv_test_SOURCES = pv_access.cpp pv_test.cpp
 
 bin_PROGRAMS   += dan_minimal
 dan_minimal_SOURCES = pv_access.cpp dan_minimal.cpp
-dan_minimal_CONFIG  = dan_minimal.xml
+dan_minimal_CONFIG  = dan_minimal_6_0.xml
 dan_minimal_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
 
+bin_PROGRAMS   += dan_minimal_autoload
+dan_minimal_autoload_SOURCES = dan_minimal_autoload.cpp
+dan_minimal_autoload_CONFIG  = dan_minimal_6_0.xml
+dan_minimal_autoload_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/codac/units/m-dan-daq/src/main/c/dan_api
 
-DAN_TESTS = dan_minimal
-NAME = dan_minimal
+
+# // SHM MINIMAL TEST //
+# NODOCKERBUILD += shm_minimal_test
+bin_PROGRAMS   += shm_minimal_test
+shm_minimal_test_SOURCES = shm_minimal_test.cpp
+shm_minimal_test_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/codac/units/m-dan-daq/src/main/c/dan_api
+shm_minimal_test_LDFLAGS = $(AM_LDFLAGS) -lrt
+
+
+
+DAN_TESTS = dan_minimal dan_minimal_autoload
+NAME = dan_minimal_autoload
 
 list: ##@dan list defined dan tests
 list: _item = $(info | $1: ) $(foreach x,$($1),$(info |  - $x))
@@ -99,8 +119,7 @@ test-set: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
 test-set: dan-aw-start dan-api-init dan-st-start
 
 test-run: ##@dan perform test in $NAME
-test-run: CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
-# test-run: dan-api-reload
+test-run: export CU_PCF_DANCONF = $(CU_SETTINGS_DIR)/$($(NAME)_CONFIG)
 test-run:
 	@ ./$(NAME)
 
@@ -119,5 +138,10 @@ env-dump:
 	  $(call _dump,DAN_ARCHIVE_MASTER) \
 	  $(call _dump,DAN_ARCHIVE_SLAVE)
 
-CU_PCF_DANCONF   = $(CU_SETTINGS_DIR)/dan_minimal.xml
+# CU_PCF_DANCONF   = $(CU_SETTINGS_DIR)/dan_minimal.xml
 
+
+
+
+shell:
+	@ bash -l

@@ -43,7 +43,6 @@ ICDEV_DIR   ?= codac/icdev/units
 
 NODOCKERBUILD += $(IC_UNITS) $(DEV_UNITS) ic-dialog dev-dialog
 
-
 unit_VARIABLES = SVN_BRA SVN_DEP MVN_ARGS
 
  _flt = $(subst ' ',_,$(subst .,_,$(subst -,_,$1)))
@@ -76,7 +75,7 @@ export SVN_USER
 
 ic-dialog: ##@svnpub manually download icdev units
 ic-dialog: $(srcdir)/dialog_svnpub_download.sh
-	@ . $< $(SVN_URL) $(DEV_DIR) $(SVN_BRA)
+	@ . $< $(SVN_URL) $(ICDEV_DIR) $(SVN_BRA)
 
 
 dev-dialog: ##@svnpub manually download devel units

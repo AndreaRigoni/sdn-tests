@@ -21,6 +21,10 @@
 
 
 #include <danApi.h>
+
+#include <dan/dan_Admin.h>
+#include <dan/dan_Monitor.h>
+
 #include <iostream>
 
 #include <log.h>
@@ -37,22 +41,24 @@ int main(void) {
     // LOG INIT //
     InitializeLOG();
 
+
     // DAN DATACORE INIT //
+
     dan_DataCore dc = dan_initLibrary();
-    if (dc == NULL) {
-        std::cerr << "Error during DAN init \n";
-        exit(1);
-    }
+//    if (dc == NULL) {
+//        std::cerr << "Error during DAN init \n";
+//        return 1;
+//    }
 
     // SUBSCRIBER //
-    int sid = dan_admin_initSubscriber(dc,mySubscriber);
-    std::cout << "sid = " << sid << std::endl;
+//    int sid = dan_admin_initSubscriber(dc,mySubscriber);
+//    std::cout << "sid = " << sid << std::endl;
 
     // MONITOR //
     dan_Monitor mon = dan_monitor_initMonitor(dc,DummySrc,mySubscriber);
     if(mon == NULL) {
         std::cerr << "error init monitor\n";
-        exit(1);
+        return 1;
     }
 
    const char anim[] = "-/|\\";

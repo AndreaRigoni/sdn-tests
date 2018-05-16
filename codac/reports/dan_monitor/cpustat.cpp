@@ -63,18 +63,26 @@ CpuPlot::CpuPlot( QWidget *parent ):
     setAxisTitle( QwtPlot::yLeft, "Cpu Usage [%]" );
     setAxisScale( QwtPlot::yLeft, 0, 100 );
 
-
-    this->curve = new QwtPlotCurve("user");
+    curve_user = new QwtPlotCurve("user");
+    curve_system = new QwtPlotCurve("system");
 
     x.push_back(0);
-    y.push_back(0);
-    curve->setSamples(x,y);
-    curve->attach(this);
-    curve->setVisible( true );
+    y_user.push_back(0);
+    y_sys.push_back(0);
+    curve_user->setSamples(x,y_user);
+    curve_user->attach(this);
+    curve_user->setVisible( true );
+
+    curve_system->setSamples(x,y_sys);
+    curve_system->attach(this);
+    curve_system->setVisible( true );
+    curve_system->setPen(QColor(255,0,0),1);
 
     replot();
     timer.Start();
-    (void)startTimer(20);
+
+    // internal timer event //
+    (void)startTimer(100);
 }
 
 void CpuPlot::timerEvent(QTimerEvent *e)
@@ -85,17 +93,20 @@ void CpuPlot::timerEvent(QTimerEvent *e)
 
     (void)e;
     x.push_back(timer.StopWatch());
-    y.push_back(user + system);
+    y_user.push_back(user);
+    y_sys.push_back(system);
 
-    if(x.size() > 100) {
+    if(x.size() > 200) {
         x.pop_front();
-        y.pop_front();
+        y_user.pop_front();
+        y_sys.pop_front();
     }
-    curve->setSamples(x,y);
+    curve_user->setSamples(x,y_user);
+    curve_system->setSamples(x,y_sys);
     setAxisScale( QwtPlot::xBottom, x.front(), x.back() );
 
-    QStatusBar * status = ((QMainWindow*)this->window())->statusBar();
-    status->showMessage("running...");
+//    QStatusBar * status = ((QMainWindow*)this->window())->statusBar();
+//    status->showMessage("running...");
 
     replot();
 }

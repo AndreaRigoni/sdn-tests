@@ -136,6 +136,29 @@ AX_KCONFIG_MODULES([EXT],
 AC_SUBST([EXT_MODULES])
 
 
+AS_VAR_SET([LDFLAGS],[-lrt])
+AC_LANG(C)
+AC_RUN_IFELSE(
+ [AC_LANG_PROGRAM([
+ #include <sys/types.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+  ], [dnl
+	int32_t fd=-1;
+	fd=shm_open("test", O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
+	if (fd < 0) { return 1; }
+	shm_unlink("test");
+	return 0;
+   ])],
+  [AC_MSG_NOTICE(["SHM open succeded"])
+   AS_VAR_SET([ENABLE_SHM],[yes])],
+  [AC_MSG_FAILURE(["SHM open failed"])
+   AS_VAR_SET([ENABLE_SHM],[no])])
+
+
+
 
 ## // GIT IGNORE // ##
 AX_GITIGNORE_ADD_PATH([${builddir}])

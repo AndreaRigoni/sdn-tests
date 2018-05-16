@@ -35,9 +35,10 @@ include $(top_srcdir)/conf/kscripts/docker.mk
 DL   ?= $(DOWNLOAD_DIR)
 TMP  ?= $(abs_top_builddir)
 
-${DL} ${TMP}:
-	@$(MKDIR_P) $@
+##${DL} ${TMP}:
+##	@$(MKDIR_P) $@
 
+DIRECTORIES += $(DL) $(TMP)
 
 
 ## /////////////////////////////////////////////////////////////////////////////

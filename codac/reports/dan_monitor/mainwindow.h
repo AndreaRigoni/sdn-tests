@@ -2,7 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStatusBar>
+
 #include "cpustat.h"
+#include "vpstreamers.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  MAIN WINDOW  ///////////////////////////////////////////////////////////////
@@ -21,9 +24,24 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QStatusBar *getStatusBar();
+
+public slots:
+    void loadFromFile();
+
+    void hideAllPlots();
+    void showCPULoad();
+    void showStreamers();
+
 private:
     Ui::MainWindow *ui;
-    CpuPlot *plot;
+    QLayout     *m_plot_layout;
+    CpuPlot     *m_plot_cpu;
+    VPStreamers *m_plot_stremers;
+    class ICBrowser *browser;
 };
+
+
+
 
 #endif // MAINWINDOW_H

@@ -5,6 +5,8 @@
 
 #include <Core/Timer.h>
 
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //  CPUSTAT  ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +58,9 @@ class CpuPlot : public QwtPlot
     };
 
     Timer timer;
-    QVector<double> x,y;
-    QwtPlotCurve *curve;
-    double cpu_val[NCpuData];
+    QVector<double> x,y_user,y_sys;
+    QwtPlotCurve *curve_user;
+    QwtPlotCurve *curve_system;
 
 public:
     CpuPlot( QWidget *parent = 0 );

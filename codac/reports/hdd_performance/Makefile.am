@@ -22,8 +22,11 @@
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/codac/CodacDan.mk
 
-all: write-raw
+run: ##@tests run all tests
+run: $(TEST_LOGS)
 
+
+TEST_LOGS =
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  DAN COMPILE  ///////////////////////////////////////////////////////////////
@@ -37,11 +40,8 @@ DAN_LIBS = \
 		   dan_base \
 		   dan_api \
 		   dan_client_api \
-		   dan_hdf
-
-
-#COMMON_SOURCE_DIR=$(top_builddir)/codac/units/m-dan-common/src/main/c/common
-#COMMON_SOURCES = dan_cMetadataCash.c dan_stream_struct.c
+		   dan_hdf \
+		   hdf5
 
 DAN_LIBRARY_DIRS =
 
@@ -70,8 +70,19 @@ DAN_CPPFLAGS = -g -fPIC -O2 -fno-strict-aliasing -pthread -W -Wall -Wno-unused \
 -Wno-parentheses -DNDEBUG -Di586 -DARCH='"i586"' -DLINUX -D_LARGEFILE64_SOURCE \
 -D_GNU_SOURCE -D_REENTRANT -D_LITTLE_ENDIAN $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
 
-# AM_CPPFLAGS = $(foreach inc,$(DAN_INCLUDE_DIRS),-I$(inc))
-# AM_LDFLAGS  = $(DAN_LDLIBS)
+
+## /////////////////////////////////////////////////////////////////////////////
+## //  EXT  ////////////////////////////////////////////////////////////////////
+## /////////////////////////////////////////////////////////////////////////////
+
+ext: ##@ext compile externals
+ext: $(CCSTICKERS_LA)
+# .PHONY: $(CCSTICKERS_LA)
+CCSTICKERS_LA = $(top_builddir)/ext/ccStickers/libccStickers.la
+$(CCSTICKERS_LA):
+	@ $(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir)/ext ext-ccStickers
+
+
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
@@ -96,8 +107,9 @@ $(FIO_GENERATE_PLOTS): fio
 # write_trs_LOGS = seq-test \
 #				 rnd-test
 
+NODOCKERBUILD += $(FIO_LOGS)
 FIO_LOGS = \
-		   write_fio.log
+		   write-fio.log
 
 CLEANFILES = $(FIO_LOGS) \
 			 $(subst .log,.dat,$(FIO_LOGS)) \
@@ -110,108 +122,51 @@ export size
 export blocksize
 export numjobs
 
-write_fio.log: ##@tests perform fio hdd throughput test
+write-fio.log: ##@tests perform fio hdd throughput test
 $(FIO_LOGS): %.log: %.ini
 	@ $(FIO) $< --filename=$*.dat > $@
 
-
+NODOCKERBUILD += plots
 plots: fio_plot.sh
 	@ sh $< "test"
-
-# bin_PROGRAMS      = fio-plot
-# fio_plot_SOURCES  = fio-plot.cpp
-# fio_plot_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
 
 .eps.png:
 	@ convert -density 300 $< $@
 
+TEST_LOGS += write-fio.log
 
 
-## ////////////////////////////////////////////////////////////////////////////////
-## //  DAN INJECTOR TESTS  ////////////////////////////////////////////////////////
-## ////////////////////////////////////////////////////////////////////////////////
-
-DAN_INJECTOR = /opt/codac/tests/dan/dan-api-injector
-DAN_INJ_TYPE = INT16_RAW_P
-# INT16_HDF_P INT16_SRV_P
-
-DAN_LOGS = write_dan
-
-CLEANFILES += *.h5
-
-# Number of channels 1 or 2
-# Total payload size, B default 10M
-# Transfer rate, KB/sec (absent or 0 - maximal available)
-# Data block size, B default 100K
-# HDF5 payload chunk size. B default 10 datablocks
-# HDF5 headers chunk size, headers
-write_dan_ARGS = 1 4G 0 512K 1M
-
-write_dan: ##@tests perform DAN ijector tests
-$(DAN_LOGS): _dan_inj = $(foreach typ,$(DAN_INJ_TYPE),\
-			 $(DAN_INJECTOR)_$(typ) $(abs_builddir)/$1_$(typ).h5 $($1_ARGS) > \
-			 $1_$(typ).log && mv DAN_Injector.log $1_data_$(typ).log;)
-
-$(DAN_LOGS):
-	@ $(call _dan_inj,$@)
 
 
-shell:
-	@ bash -l
 
-
-## ////////////////////////////////////////////////////////////////////////////////
-## //  INDEPENDENT TEST   /////////////////////////////////////////////////////////
-## ////////////////////////////////////////////////////////////////////////////////
-
+## /////////////////////////////////////////////////////////////////////////////
+## //  RAW TEST   //////////////////////////////////////////////////////////////
+## /////////////////////////////////////////////////////////////////////////////
 
 bin_PROGRAMS        = write-raw
 write_raw_SOURCES  = write_raw.cpp
 write_raw_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
 write_raw_LDFLAGS  =
-write_raw_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
+write_raw_LDADD    = $(CCSTICKERS_LA)
 
-
-$(addprefix run-,$(bin_PROGRAMS)): run-%: %
-	@ ./$*
-
-
-write_raw_ARGS = --size 10 --bs 512 --bufs 1024
+write_raw_ARGS = --size 5 --bs 512 --bufs 1024
 write-raw.log: ##@tests run local write-raw application
 write-raw.log: ext write-raw
 	@ ./write-raw write-raw.dat $(write_raw_ARGS)
 
-
-
-ext: ##@ext compile externals
-ext: $(CCSTICKERS_LA)
-
-.PHONY: $(CCSTICKERS_LA)
-CCSTICKERS_LA = $(top_builddir)/ext/ccStickers/libccStickers.la
-$(CCSTICKERS_LA):
-	@ $(MAKE) $(AM_MAKEFLAGS) -C $(top_builddir)/ext ext-ccStickers
-
-
 CLEANFILES += write-raw.log
-
+TEST_LOGS += write-raw.log
 
 
 ## ////////////////////////////////////////////////////////////////////////////////
 ## //  HDF  ///////////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
-bin_PROGRAMS += write_hdf
+bin_PROGRAMS += write-hdf
 write_hdf_SOURCES  = $(addprefix $(COMMON_SOURCE_DIR)/,$(COMMON_SOURCES)) write_hdf.cpp
 write_hdf_CPPFLAGS = $(DAN_CPPFLAGS) -I$(top_builddir)/ext/ccStickers/src
 write_hdf_LDFLAGS  = $(DAN_LDLIBS)
-write_hdf_LDADD    = $(top_builddir)/ext/ccStickers/libccStickers.la
+write_hdf_LDADD    = $(CCSTICKERS_LA)
 
-
-
-NAME ?= $(lastword $(bin_PROGRAMS))
-
-run: ##@tests run test in NAME
-run: $(NAME)
-	@ $(builddir)/$(NAME) $(ARGS)
 
 

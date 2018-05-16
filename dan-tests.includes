@@ -11,61 +11,7 @@ conf/kconfig/kconfig
 conf/kconfig/kconfig/lxdialog
 codac
 docs
-codac/svnpub
-codac/units/m-DAN-sample/target/main/c++/MyFirstDANProgram
-codac/units/m-DAN-sample/src/main/c++/MyFirstDANProgram
-codac/units/m-DAN-sample/src/main/c++/include
-codac/units/m-DAN-sample/src/main/epics/PCF0CoreApp/Db
-codac/units/m-DAN-sample/src/main/epics/iocBoot/iocEC-DAN-PCF0CORE
-codac/units/m-DAN-sample/target/main/epics
-codac/units/m-DAN-sample/target/main/epics/PCF0CoreApp/Db
-codac/units/m-DAN-sample/target/main/epics/SharedTemplateApp/src/O.linux-x86_64
-codac/units/m-DAN-sample/target/main/epics/EC-DANApp/src/O.linux-x86_64
-codac/units/m-DAN-sample/target/main/epics/iocBoot/iocEC-DAN-PCF0SYSM
-codac/units/m-DAN-sample/target/main/epics/PCF0CoreApp
-codac/units/m-DAN-sample/target/main/epics/PCF0CoreApp/Db/O.linux-x86_64
-codac/units/m-DAN-sample/src/main/epics/iocBoot/iocEC-DAN-PCF0SYSM
-codac/units/m-DAN-sample/target/main/epics/SharedTemplateApp/Db/O.linux-x86_64
-codac/units/m-DAN-sample/target/main/epics/SharedTemplateApp/src
-codac/units/m-DAN-sample/target/main/epics/SharedTemplateApp
-codac/units/m-DAN-sample/target/main/epics/configure/O.linux-x86_64
-codac/units/m-DAN-sample/target/main/epics/EC-DANApp/Db/O.linux-x86_64
-codac/units/m-DAN-sample/src/main/epics
-codac/units/m-DAN-sample/src/main/epics/SharedTemplateApp
-codac/units/m-DAN-sample/src/main/c++
-codac/units/m-DAN-sample/target/test/c++/dan-reader/readDANDataByAbsTime
-codac/units/m-DAN-sample/target/main/epics/EC-DANApp
-codac/units/m-DAN-sample/src/main/epics/SharedTemplateApp/Db
-codac/units/m-DAN-sample/src/main/epics/PCF0CoreApp/src
-codac/units/m-DAN-sample/src/test/c++/dan-reader
-codac/units/m-DAN-sample/target/main/c++/include
-codac/units/m-DAN-sample/target/main/epics/EC-DANApp/Db
-codac/units/m-DAN-sample/src/main/epics/iocBoot/iocEC-DAN-PSH0SYSM
-codac/units/m-DAN-sample/target/test/c++/dan-reader/readDANDataByRelTime
-codac/units/m-DAN-sample/target/main/epics/PCF0CoreApp/src
-codac/units/m-DAN-sample/target/main/epics/configure
-codac/units/m-DAN-sample/target/main/epics/iocBoot
-codac/units/m-DAN-sample/target/test/c++
-codac/units
-codac/units/m-DAN-sample/target/main/epics/iocBoot/iocEC-DAN-PSH0CORE
-codac/units/m-DAN-sample/src/main/epics/SharedTemplateApp/src
-codac/units/m-DAN-sample/src/test/c++/dan-reader/readDANDataByRelTime
-codac/units/m-DAN-sample/src/test/c++
-codac/units/m-DAN-sample/target/main/epics/EC-DANApp/src
-codac/units/m-DAN-sample/src/main/epics/PCF0CoreApp
-codac/units/m-DAN-sample/target/test/c++/dan-reader
-codac/units/m-DAN-sample/target/main/epics/iocBoot/iocEC-DAN-PSH0SYSM
-codac/units/m-DAN-sample/src/main/epics/iocBoot/iocEC-DAN-PSH0CORE
-codac/units/m-DAN-sample/src/main/epics/EC-DANApp/src
-codac/units/m-DAN-sample/src/main/epics/iocBoot
-codac/units/m-DAN-sample/target/main/epics/SharedTemplateApp/Db
-codac/units/m-DAN-sample/src/main/epics/EC-DANApp
-codac/units/m-DAN-sample/src/main/epics/configure
-codac/units/m-DAN-sample/target/main/epics/iocBoot/iocEC-DAN-PCF0CORE
-codac/units/m-DAN-sample/target/main/epics/PCF0CoreApp/src/O.linux-x86_64
-codac/units/m-DAN-sample/target/main/c++
-codac/units/m-DAN-sample/src/main/epics/EC-DANApp/Db
-codac/units/m-DAN-sample/src/test/c++/dan-reader/readDANDataByAbsTime
+
 
 
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-sdn/src/main/c++/include
@@ -76,8 +22,7 @@ codac/units/m-DAN-sample/src/test/c++/dan-reader/readDANDataByAbsTime
 
 
 
-
-
+/home/andrea/devel/codac/dan-tests/build/codac/reports/dan_monitor
 
 codac/units/m-DAN-sample/src/main/c++/MySecondDANProgram
 m4
@@ -92,6 +37,9 @@ build/codac/units/m-codac-unit-api
 build/codac/units/m-codac-unit-installer
 build/codac/units/m-codac-unit-installer/codac-unit-installer
 build/codac/units/m-dan-common/src/test/c/test_time
+build/codac/units/m-dan-daq/src/main/c/dan_api
+build/codac/units/m-dan-daq/src/main/c/include
+
 conf/kscripts
 .
 codac/docker
@@ -102,7 +50,6 @@ build/codac/units/m-DAN-thrput/src/main/c++/pv_test
 codac/units/m-DAN-thrput/src/main/c++/pv_test
 codac/tmp/Qt
 
-/home/andrea/devel/codac/svnpub/codac/dev/units/m-dan-daq/trunk/src/main/c/include/
 build/codac/units/m-dan-common/src/test/c/stream_dummy_1D
 build/codac/units/m-dan-common/src/test/c
 /home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-common/src/main/c/include
@@ -143,6 +90,7 @@ build/codac/units/m-dan-daq/src/test/c/stream_dummy
 build/codac/units/m-dan-common/src/test/c/stream_dummy
 codac/reports/dan_performance
 build/codac/units/m-dan-common/src/main/c
+/home/andrea/devel/codac/dan-tests/build/codac/units/m-dan-common/src/main/c/include/
 codac/reports/dancc
 conf/m4
 build/ext/ccStickers/src/Core
@@ -157,3 +105,5 @@ build/ext/ccStickers/src/Net
 build/ext/ccStickers/src/Net/testing
 codac/reports/dan_monitor
 ext
+build/codac/units/m-dan-common/src/main/c/hdf_file_api
+build/codac/units/m-dan-daq/src/main/c/danStreamer_subs
