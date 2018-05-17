@@ -92,6 +92,8 @@ if ENABLE_EXTSRC
   # //  FIO  //
   source conf/kscripts/ext_fio.kconfig
 
+  # //  MDSPLUS  //
+  source conf/kscripts/ext_mdsplus.kconfig
 
 endif # ENABLE_EXTSRC
 

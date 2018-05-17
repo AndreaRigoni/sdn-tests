@@ -118,12 +118,15 @@ m4_sinclude(conf/kscripts/ext_llvm.ac)
 ## EXT_CCSTICKERS ##
 m4_sinclude(conf/kscripts/ext_ccStickers.ac)
 
-## EXT_FIO ##
+## EXT_JSONRPCC ##
 m4_sinclude(conf/kscripts/ext_jsonrpcc.ac)
 
 ## EXT_FIO ##
 m4_sinclude(conf/kscripts/ext_fio.ac)
 
+
+## EXT_MDSPLUS ##
+m4_sinclude(conf/kscripts/ext_mdsplus.ac)
 
 ## EXT ##
 AX_KCONFIG_MODULES([EXT],
@@ -131,7 +134,8 @@ AX_KCONFIG_MODULES([EXT],
 		  [llvm],[llvm external sources],
 		  [ccStickers],[ccStickers external sources],
 		  [jsonrpcc],[jsonrpcc external sources],
-		  [fio],[fio external sources]
+		  [fio],[fio external sources],
+                  [mdsplus],[mdsplus external sources]
 		  )
 AC_SUBST([EXT_MODULES])
 
