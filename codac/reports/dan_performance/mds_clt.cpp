@@ -37,6 +37,7 @@ class mdsclt_Options : public Options {
     std::string m_size;
     std::string m_server_name;
     int m_server_port;
+    int m_listen_only;
 
     mdsclt_Options(int argc, char *argv[])
     {
@@ -48,10 +49,12 @@ class mdsclt_Options : public Options {
         m_buffer_size = "8K";
         m_server_name = "localhost";
         m_server_port = 8000;
+        m_listen_only = 0;
 
         // setup //
         this->SetUsage("usage: mds-clt [options]");
         this->AddOptions()
+                ("listen",  &m_listen_only,  "listen only")
                 ("file",  &file_name,  "output file name")
                 ("prof-file",  &prof_file_name,  "profiler output file name")
                 ("size",    &m_size,        "output data size")
@@ -90,6 +93,13 @@ int main(int argc, char *argv[])
     // START MDSIP //
     std::string addr;
     testing::MdsIpInstancer *mdsip = 0;
+    if(opt.m_listen_only) {
+        mdsip = new testing::MdsIpInstancer("tcp",opt.m_server_port);
+        addr = mdsip->getAddress();
+        pause();
+        exit(0);
+    }
+
     if(opt.m_server_name == "localhost") {
         std::cout << "Instancing local mdsip server ... \n";
         mdsip = new testing::MdsIpInstancer("tcp",opt.m_server_port);
@@ -116,6 +126,12 @@ int main(int argc, char *argv[])
     // connection //
     cnx = new Connection(const_cast<char*>(addr.c_str()));
 
+    // set env //
+    std::stringstream ss;
+    ss << "write(*,' ------ SET PATH ENV ---------');"
+       << " _status = setenv('" << path << "=.');";
+    cnx->get( ss.str().c_str(),0,0);
+
     { // create tree //
         Data * args[1];
         args[0] = new String(opt.file_name);
@@ -128,7 +144,6 @@ int main(int argc, char *argv[])
                     ,args,1);
         deleteData(args[0]);
     }
-
 
     // open tree
     cnx->openTree(opt.file_name,1);
