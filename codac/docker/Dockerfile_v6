@@ -1,6 +1,6 @@
 FROM scratch
 
-ARG CODAC_NAME=codac_v5
+ARG CODAC_NAME=codac_v6
 ARG ENTRY_POINT=${CODAC_NAME}_entry.sh
 
 ADD ${CODAC_NAME}.tar /
@@ -21,4 +21,6 @@ RUN yum install -y qt5-qtbase-devel graphviz
 
 # remove plymouth that breaks init in docker
 RUN yum remove  -y plymouth
+
+
 
