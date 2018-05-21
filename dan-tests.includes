@@ -107,3 +107,8 @@ codac/reports/dan_monitor
 ext
 build/codac/units/m-dan-common/src/main/c/hdf_file_api
 build/codac/units/m-dan-daq/src/main/c/danStreamer_subs
+src/mds_example
+
+
+build/ext/mdsplus/include
+

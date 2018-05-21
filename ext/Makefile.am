@@ -59,9 +59,9 @@ ext-list:
 # //  EXT MODULES  ////////////////////////////////////////////////////////// //
 # /////////////////////////////////////////////////////////////////////////// //
 
-NODOCKERBUILD += download qwt
+NODOCKERBUILD += download qwt mdsplus
 
-DOWNLOADS  = $(EXT_MODULES)
+DOWNLOADS  += $(EXT_MODULES)
 
 ccStickers: ##@ext download ccStickers sources
 ccStickers_URL = $(CCSTICKERS_URL)

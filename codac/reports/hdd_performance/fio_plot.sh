@@ -1,4 +1,4 @@
-!/bin/sh
+#!/bin/sh
 #
 # This script is an almost total rewrite by Louwrentius
 # of the original fio_generate_plots script provided as part of the FIO storage
@@ -59,22 +59,23 @@ set style line 7 lc rgb \"#A65628\" lw $DEFAULT_LINE_WIDTH lt 1;
 set style line 20 lc rgb \"#000000\" lt $DEFAULT_GRID_LINE_TYPE lw $DEFAULT_LINE_WIDTH;
 "
 
-DEFAULT_TERMINAL="set terminal postscript eps" # dashed size $XRES,$YRES"
+DEFAULT_TERMINAL="set terminal postscript eps enhanced color" # dashed size $XRES,$YRES"
 DEFAULT_TITLE_FONT="\"Helvetica,28\""
 DEFAULT_AXIS_FONT="\"Helvetica,14\""
 DEFAULT_AXIS_LABEL_FONT="\"Helvetica,16\""
 DEFAULT_XLABEL="set xlabel \"Time (sec)\" font $DEFAULT_AXIS_LABEL_FONT"
 DEFAULT_XTIC="set xtics font $DEFAULT_AXIS_FONT"
 DEFAULT_YTIC="set ytics font $DEFAULT_AXIS_FONT"
-DEFAULT_MXTIC="set mxtics 0"
+DEFAULT_MXTIC="set mxtics 1"
 DEFAULT_MYTIC="set mytics 2"
 DEFAULT_XRANGE="set xrange [0:$SAMPLE_DURATION]"
-DEFAULT_YRANGE="set yrange [0:*]"
+DEFAULT_YRANGE="set yrange [0:500]"
 DEFAULT_GRID="set grid ls 20"
 # DEFAULT_KEY="set key outside bottom center ; set key box enhanced spacing 2.0 samplen 3 horizontal width 4 height 1.2 "
 # DEFAULT_SOURCE="set label 30 \"Data source: http://example.com\" font $DEFAULT_AXIS_FONT tc rgb \"#00000f\" at screen 0.976,0.175 right"
 
 DEFAULT_OPTS="\
+$DEFAULT_TERMINAL;
 $DEFAULT_LINE_COLORS;
 $DEFAULT_GRID_LINE;
 $DEFAULT_GRID;
@@ -86,9 +87,6 @@ $DEFAULT_XTIC;
 $DEFAULT_YTIC;
 $DEFAULT_MXTIC;
 $DEFAULT_MYTIC;
-$DEFAULT_KEY;
-$DEFAULT_TERMINAL ;
-$DEFAULT_SOURCE;
 "
 
 
@@ -138,6 +136,6 @@ plot () {
 #
 plot "I/O Latency" lat "Time (msec)" 1000
 #plot "I/O Operations Per Second" iops "IOPS" 1
-plot "I/O Submission Latency" slat "Time (μsec)" 1
-plot "I/O Completion Latency" clat "Time (msec)" 1000
+#plot "I/O Submission Latency" slat "Time (μsec)" 1
+#plot "I/O Completion Latency" clat "Time (msec)" 1000
 plot "I/O Bandwidth" bw "Throughput (MB/s)" 1024 dots

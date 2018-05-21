@@ -22,7 +22,6 @@ static time_nanosec_t ts_nanos_0 = 1460000000000000000UL;
 //  MAIN  //////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
 class danclt_Options : public Options {
   public:
     char file_name[PATH_MAX];
@@ -46,7 +45,7 @@ class danclt_Options : public Options {
         m_server_port = "9999";
 
         // setup //
-        this->SetUsage("usage: danraw [options]");
+        this->SetUsage("usage: dan_clt [options]");
         this->AddOptions()
                 ("file",  &file_name,  "output file name")
                 ("prof-file",  &prof_file_name,  "profiler output file name")
@@ -159,7 +158,7 @@ int main(int argc, char *argv[])
         header.pbl_data.operational_mode = 0; // TODO: what is this?
         header.pbl_data.reserve = 0;
         header.pbl_data.sampling_rate = SamplingRate; // Important to rebuild timestamps
-        header.start_sample_id = i; // TODO: Comprehend why not i * n_samples ??
+        header.start_sample_id = i; // TODO: Understand why not i * n_samples ??
         dan_set_publisher_header(p_stream, sizeof(PUBLISHER_DATA_BLOCK_HEADER), &header.pbl_data);
 
         time_nanosec_t ts_nanos;

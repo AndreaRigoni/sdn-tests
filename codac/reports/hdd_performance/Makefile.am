@@ -109,7 +109,7 @@ $(FIO_GENERATE_PLOTS): fio
 
 NODOCKERBUILD += $(FIO_LOGS)
 FIO_LOGS = \
-		   write-fio.log
+		   write_fio.log
 
 CLEANFILES = $(FIO_LOGS) \
 			 $(subst .log,.dat,$(FIO_LOGS)) \
@@ -122,13 +122,13 @@ export size
 export blocksize
 export numjobs
 
-write-fio.log: ##@tests perform fio hdd throughput test
+write_fio.log: ##@tests perform fio hdd throughput test
 $(FIO_LOGS): %.log: %.ini
 	@ $(FIO) $< --filename=$*.dat > $@
 
-NODOCKERBUILD += plots
-plots: fio_plot.sh
-	@ sh $< "test"
+NODOCKERBUILD += plots %.png
+plots: fio_plot.sh | write_fio.log
+	@ sh $< "seq-test"
 
 .eps.png:
 	@ convert -density 300 $< $@

@@ -21,6 +21,10 @@
 
 include $(top_srcdir)/Common.mk
 include $(top_srcdir)/codac/CodacDan.mk
+include $(top_srcdir)/conf/kscripts/ext_mdsplus.mk
+
+
+
 
 
 ## /////////////////////////////////////////////////////////////////////////////
@@ -75,10 +79,10 @@ AM_LDFLAGS  = $(DAN_LDLIBS)
 LDADD       = $(top_builddir)/ext/ccStickers/libccStickers.la
 
 
-bin_PROGRAMS = danraw danhdf danclt test_multich
+bin_PROGRAMS = danraw dansrv danclt test_multich
 
 danraw_SOURCES = dan_raw.cpp
-danhdf_SOURCES = dan_hdf.cpp
+dansrv_SOURCES = dan_srv.cpp
 danclt_SOURCES = dan_clt.cpp
 test_multich_SOURCES = test_multich.cpp
 
@@ -100,7 +104,7 @@ DAN_INJECTOR       ?= /opt/codac/tests/dan/dan-api-injector
 DAN_INJ_TYPE       ?= INT16_RAW_P INT16_HDF_P INT16_SRV_P INT16_CLT_P
 DAN_TARGET_SRV     ?= localhost
 DAN_NCHANNELS      ?= 1
-DAN_TSIZE          ?= 2G
+DAN_TSIZE          ?= 10G
 DAN_DBSIZE         ?= 512K
 DAN_TRATE_MB       ?= 250
 DAN_LOGS_PREFIX    ?= dan
@@ -156,25 +160,159 @@ dan_showlog: $(DAN_LOGS)
 	$(MAKE) -j $(foreach type,$(DAN_LOGSHOW), show_plots_$(type) )
 
 
-
 CLEANFILES = *.h5 $(DAN_TARGET_DIR)/*.out $(DAN_LOGS) *.png *.log /tmp/data/*.h5
 
-
-
-
-
-
 ## ////////////////////////////////////////////////////////////////////////////////
-## //  RUN  ///////////////////////////////////////////////////////////////////////
+## //  MDSPLUS  ///////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
+if EXT_MDSPLUS
+bin_PROGRAMS += mds-srv
+mds_srv_SOURCES      = mds_srv.cpp
+mds_srv_CPPFLAGS     = $(AM_CPPFLAGS) $(MDS_CPPFLAGS)
+mds_srv_LDFLAGS      = $(AM_LDFLAGS) $(MDS_LDFLAGS) -Wl,-rpath,${MDS_LIBDIR}
 
-NAME = $(lastword $(bin_PROGRAMS))
-run: ##@tests run test in NAME
-run: $(NAME)
-	@ $(builddir)/$(NAME) $(ARGS)
+bin_PROGRAMS += mds-clt
+mds_clt_SOURCES      = mdsipmain.c mds_clt.cpp
+mds_clt_CPPFLAGS     = $(AM_CPPFLAGS) $(MDS_CPPFLAGS) -I$(top_builddir)/ext/mdsplus
+mds_clt_LDFLAGS      = $(AM_LDFLAGS) $(MDS_LDFLAGS) -Wl,-rpath,${MDS_LIBDIR}
+else
+$(warning ext sources for Mdsplus are enabled, please reconfigure)
+endif
 
-shell:
-	@ bash -l
+CLEANFILES += mdssrv_data_001.*
+CLEANFILES += mdsclt_data_001.*
+
+mdssrv_data.log: | mds-srv
+	@ $(builddir)/mds-srv --file $(basename $@) --prof-file $(basename $@) \
+	  --size $(DAN_TSIZE) --db-size $(DAN_DBSIZE)
+
+
+mdsclt_data.log: | mds-clt
+	@ $(builddir)/mds-clt --file $(basename $@) --prof-file $(basename $@) \
+	  --size $(DAN_TSIZE) --db-size $(DAN_DBSIZE) \
+	  --server_name "localhost" --server_port "8000"
+
+
+DAN_LOGS += mdssrv_data.log
+
+
+
+
+
+
+
+
+# ////////////////////////////////////////////////////////////////////////////////
+# //  REPORTS  ///////////////////////////////////////////////////////////////////
+# ////////////////////////////////////////////////////////////////////////////////
+# ////////////////////////////////////////////////////////////////////////////////
+# ////////////////////////////////////////////////////////////////////////////////
+
+
+## // DAN RAW VS HDF //
+
+danrawsrv_LOGS = dan_data_INT16_RAW_P.log dan_data_INT16_SRV_P.log
+
+danrawsrv_DT.png: $(danrawsrv_LOGS)
+	@ plot-perf -s DT $^ && mv Plot-perf.png $@
+
+danrawsrv_DT: $(danrawsrv_LOGS)
+	@ plot-perf DT $^
+
+danrawsrv_TRS.png: $(danrawsrv_LOGS)
+	@ plot-perf -s TRS 200 $^ && mv Plot-perf.png $@
+
+danrawsrv_TRS: $(danrawsrv_LOGS)
+	@ plot-perf TRS 300 $^
+
+danrawsrv_BUFALL.png: $(danrawsrv_LOGS)
+	@ plot-perf -s BUFALL $^ && mv Plot-perf.png $@
+
+danrawsrv_BUFALL: $(danrawsrv_LOGS)
+	@ plot-perf BUFALL $^
+
+
+
+
+## // MDS VS DAN //
+
+mdsvsdan_SRV_LOGS = dan_data_INT16_SRV_P.log mdssrv_data.log
+
+mdsvsdan_SRV_TRS.png: $(mdsvsdan_SRV_LOGS)
+	@ plot-perf -s TRS 10 $^ && mv Plot-perf.png $@
+
+mdsvsdan_SRV_TRS: $(mdsvsdan_SRV_LOGS)
+	@ plot-perf TRS 300 $^
+
+mdsvsdan_SRV_DT: $(mdsvsdan_SRV_LOGS)
+	@ plot-perf DT $^
+
+mdsvsdan_SRV_BUFALL.png: $(mdsvsdan_SRV_LOGS)
+	@ plot-perf -s BUFALL $^ && mv Plot-perf.png $@
+
+mdsvsdan_SRV_BUFALL: $(mdsvsdan_SRV_LOGS)
+	@ plot-perf BUFALL $^
+
+
+
+CLEANFILES += mdsvsdan_SRV_TRS.png
+
+
+
+## // DAN RAW VS HDF //
+
+dansrvclt_LOGS = dan_data_INT16_SRV_P.log dan_data_INT16_CLT_P.log
+
+dansrvclt_DT.png: $(dansrvclt_LOGS)
+	@ plot-perf -s DT $^ && mv Plot-perf.png $@
+
+dansrvclt_DT: $(dansrvclt_LOGS)
+	@ plot-perf DT $^
+
+dansrvclt_TRS.png: $(dansrvclt_LOGS)
+	@ plot-perf -s TRS 200 $^ && mv Plot-perf.png $@
+
+dansrvclt_TRS: $(dansrvclt_LOGS)
+	@ plot-perf TRS 300 $^
+
+dansrvclt_BUFALL.png: $(dansrvclt_LOGS)
+	@ plot-perf -s BUFALL $^ && mv Plot-perf.png $@
+
+dansrvclt_BUFALL: $(dansrvclt_LOGS)
+	@ plot-perf BUFALL $^
+
+
+
+
+
+## // MDS VS DAN - CLT //
+
+mdsvsdan_CLT_LOGS = dan_data_INT16_CLT_P.log mdsclt_data.log
+
+mdsvsdan_CLT_TRS.png: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf -s TRS 10 $^ && mv Plot-perf.png $@
+
+mdsvsdan_CLT_TRS: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf TRS 300 $^
+
+mdsvsdan_CLT_DT: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf DT $^
+
+mdsvsdan_CLT_BUFALL.png: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf -s BUFALL $^ && mv Plot-perf.png $@
+
+mdsvsdan_CLT_BUFALL: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf BUFALL $^
+
+
+
+
+
+
+
+
+
+
 
 
