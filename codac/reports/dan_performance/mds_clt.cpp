@@ -38,6 +38,7 @@ class mdsclt_Options : public Options {
     std::string m_server_name;
     int m_server_port;
     int m_listen_only;
+    size_t m_howmany;
 
     mdsclt_Options(int argc, char *argv[])
     {
@@ -50,7 +51,7 @@ class mdsclt_Options : public Options {
         m_server_name = "localhost";
         m_server_port = 8000;
         m_listen_only = 0;
-
+        m_howmany = 1;
         // setup //
         this->SetUsage("usage: mds-clt [options]");
         this->AddOptions()
@@ -62,6 +63,7 @@ class mdsclt_Options : public Options {
                 ("bf-size", &m_buffer_size, "server buffer size")
                 ("server_name", &m_server_name, "server name")
                 ("server_port", &m_server_port, "server port")
+                ("howmany", &m_howmany, "how many data block to pack together")
                 ;
         this->Parse(argc,argv);
     }
@@ -80,7 +82,7 @@ int main(int argc, char *argv[])
 
     size_t bsize = opt.block_size();
     size_t bsize_int = bsize/sizeof(int32_t);
-    size_t bsize_int16 = bsize/sizeof(int16_t);
+    // size_t bsize_int16 = bsize/sizeof(int16_t);
     size_t ndb   = opt.size()/opt.block_size();
     float  dt = 1.E-6;
 
@@ -148,17 +150,26 @@ int main(int argc, char *argv[])
     // open tree
     cnx->openTree(opt.file_name,1);
 
+    std::cout << "tree3 opened \n" << std::flush;
     // prepare data //
     int *array = (int*)malloc(bsize);
     for(size_t i=0; i<bsize_int; ++i) array[i]=i;
-    unique_ptr<Int32Array> array_data = new Int32Array(array,bsize_int);
 
+
+    unique_ptr<Int32Array> array_data(new Int32Array(array,bsize_int));
+
+    std::vector<Data *> mnyels;
+    Data **args = (Data **)malloc(sizeof(Data*)*opt.m_howmany);
+    unique_ptr<GetMany> mny;
+    size_t mnypos = 0;
 
     // init profiles with first chunk //
     profiler_data_add(&prof, 0);
     for(size_t i=0; i<ndb; ++i) {
-        float len = bsize_int*dt;
-        unique_ptr<Range> array_time = new Range(new Float32(i*len), new Float32((i+1)*len), new Float32(dt));
+        float len = dt*bsize_int;
+        unique_ptr<Range> array_time =
+                new Range(new Float32(len*i), new Float32(len*(i+1)), new Float32(dt));
+
         char * begin = array_time->getBegin()->getString();
         char * end   = array_time->getEnding()->getString();
         char * delta = array_time->getDeltaVal()->getString();
@@ -173,11 +184,28 @@ int main(int argc, char *argv[])
            << "make_range(" << begin << "," << end << "," << delta << ")" << ","
            << "$1" << ",,"
            << array_data->getSize() << ")";
-        //        ss << "size($1);";
-        Data *args[] = { array_data };
-        cnx->get(ss.str().c_str(),args,1);
+        if(opt.m_howmany <= 1) {
+            args[0] = array_data;
+            cnx->get(ss.str().c_str(),args,1);
+            profiler_data_add(&prof, bsize);
+        }
+        else {
+            if(!mny) mny = new GetMany(cnx);
+            std::stringstream es;
+            es << "exp" << mnypos;
+            mnyels.push_back(array_data->clone());
+            args[mnypos] = mnyels.back();
+            mny->append((char*)es.str().c_str(), (char*)ss.str().c_str(), &args[mnypos], 1);
+            ++mnypos;
+            mnypos %= opt.m_howmany;
+            if (mnypos == 0) {
+                mny->execute();
+                profiler_data_add(&prof, bsize * opt.m_howmany);
+                mny._delete();
+                mnyels.clear();
+            }
+        }
 
-        profiler_data_add(&prof, bsize);
         delete[] begin;
         delete[] end;
         delete[] delta;

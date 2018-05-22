@@ -133,9 +133,13 @@ plots: fio_plot.sh | write_fio.log
 .eps.png:
 	@ convert -density 300 $< $@
 
+.pdf.png:
+	@ convert -density 300 $< $@
+
+
 TEST_LOGS += write-fio.log
 
-
+CLEANFILES += *.dat *.pdf *.plt
 
 
 
@@ -149,13 +153,15 @@ write_raw_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
 write_raw_LDFLAGS  =
 write_raw_LDADD    = $(CCSTICKERS_LA)
 
-write_raw_ARGS = --size 5 --bs 512 --bufs 1024
+write_raw_ARGS = --size 10 --bs 512 --bufs 1024
 write-raw.log: ##@tests run local write-raw application
 write-raw.log: ext write-raw
-	@ ./write-raw write-raw.dat $(write_raw_ARGS)
+	@ time ./write-raw write-raw.dat $(write_raw_ARGS)
 
 CLEANFILES += write-raw.log
 TEST_LOGS += write-raw.log
+
+
 
 
 ## ////////////////////////////////////////////////////////////////////////////////

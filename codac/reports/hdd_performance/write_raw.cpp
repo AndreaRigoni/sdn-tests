@@ -43,7 +43,7 @@
 
 int main(int argc, char *argv[])
 {
-    size_t size_G = 1;
+    size_t size_G = 10;
     size_t bs_K   = 512;
     size_t bufs_K = 1024;
     std::string logfile = std::string(argv[0])+".log";
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     Histogram<double> bw("bw",400,0,4E3);
 
 
-    static const size_t MI_WINDOW = 1400;
+    static const size_t MI_WINDOW = 400;
     StatUtils::MI     lat_MI(MI_WINDOW);
     StatUtils::MA     bw_MA(MI_WINDOW);
 
@@ -124,16 +124,16 @@ int main(int argc, char *argv[])
     // std::cout << lat << "\n";
     // std::cout << bw  << "\n";
 
-    Plot2D plot("lat_histogram");
+    Plot2D plot("Posix fwrite latencies distribution");
     // plot.AddCurve(bw);
     plot.AddCurve(lat);
     plot.PrintToGnuplotFile("bw_h");
 
-    Plot2D plot2("bw_curve");
+    Plot2D plot2("Posix fwrite bandwidth writing RAW data");
     // plot2.AddCurve(bw_curve);
     plot2.AddCurve(bw_MI_curve);
-    plot2.AddCurve(bw_MA_curve);
-    plot2.AddCurve(bwm_curve);
+//    plot2.AddCurve(bw_MA_curve);
+//    plot2.AddCurve(bwm_curve);
     plot2.YAxis().SetScaleType(Plot2D::AxisType::LogScale);
     plot2.CurveFlags(1) = Plot2D::ShowLines | Plot2D::ShowPoints;
     plot2.PrintToGnuplotFile("bw_c",Plot2D::GnuplotStyle2);

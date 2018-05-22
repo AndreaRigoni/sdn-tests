@@ -103,10 +103,11 @@ export DAN_TARGET_DIR
 DAN_INJECTOR       ?= /opt/codac/tests/dan/dan-api-injector
 DAN_INJ_TYPE       ?= INT16_RAW_P INT16_HDF_P INT16_SRV_P INT16_CLT_P
 DAN_TARGET_SRV     ?= localhost
+DAN_TARGET_PRT     ?= 9999
 DAN_NCHANNELS      ?= 1
 DAN_TSIZE          ?= 10G
 DAN_DBSIZE         ?= 512K
-DAN_TRATE_MB       ?= 250
+DAN_TRATE_MB       ?= 100
 DAN_LOGS_PREFIX    ?= dan
 DAN_AVERAGE_POINTS ?= 100
 
@@ -121,7 +122,7 @@ DAN_AVERAGE_POINTS ?= 100
 
 define _dan_injtarget =
 $2_ARGS ?= $(if $(findstring CLT,$2),\
- $(DAN_TARGET_SRV) 9999 $(DAN_NCHANNELS) $(DAN_TSIZE) 0 $(DAN_DBSIZE) ,\
+ $(DAN_TARGET_SRV) $(DAN_TARGET_PRT) $(DAN_NCHANNELS) $(DAN_TSIZE) 0 $(DAN_DBSIZE) ,\
  $(DAN_TARGET_DIR)/$1_$2.out $(DAN_NCHANNELS) $(DAN_TSIZE) 0 $(DAN_DBSIZE))
 $1_data_$2.log: | $(DAN_TARGET_DIR) $(if $(findstring CLT,$2),dan-aw-start)
 	@ $$(DAN_INJECTOR)_$2 $$($2_ARGS) > $1_$2.log && mv DAN_Injector.log $$@
@@ -166,6 +167,10 @@ CLEANFILES = *.h5 $(DAN_TARGET_DIR)/*.out $(DAN_LOGS) *.png *.log /tmp/data/*.h5
 ## //  MDSPLUS  ///////////////////////////////////////////////////////////////////
 ## ////////////////////////////////////////////////////////////////////////////////
 
+MDS_TARGET_SRV ?= $(DAN_TARGET_SRV)
+MDS_TARGET_PRT ?= 8000
+MDS_HOWMANY    ?= 1
+
 if EXT_MDSPLUS
 bin_PROGRAMS += mds-srv
 mds_srv_SOURCES      = mds_srv.cpp
@@ -191,7 +196,8 @@ mdssrv_data.log: | mds-srv
 mdsclt_data.log: | mds-clt
 	@ $(builddir)/mds-clt --file $(basename $@) --prof-file $(basename $@) \
 	  --size $(DAN_TSIZE) --db-size $(DAN_DBSIZE) \
-	  --server_name "localhost" --server_port "8000"
+	  --server_name $(MDS_TARGET_SRV) --server_port $(MDS_TARGET_PRT) \
+	  --homany $(MDS_HOWMANY)
 
 
 DAN_LOGS += mdssrv_data.log
@@ -304,6 +310,9 @@ mdsvsdan_CLT_BUFALL.png: $(mdsvsdan_CLT_LOGS)
 
 mdsvsdan_CLT_BUFALL: $(mdsvsdan_CLT_LOGS)
 	@ plot-perf BUFALL $^
+
+mdsvsdan_CLT_BUF: $(mdsvsdan_CLT_LOGS)
+	@ plot-perf BUF $(DAN_TRATE_MB) $^
 
 
 
