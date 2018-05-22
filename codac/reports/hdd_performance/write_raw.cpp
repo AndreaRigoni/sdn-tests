@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
     size_t size_G = 10;
     size_t bs_K   = 512;
     size_t bufs_K = 1024;
+    int random = 0;
     std::string logfile = std::string(argv[0])+".log";
 
     // ARGS PARSE //
@@ -55,13 +56,16 @@ int main(int argc, char *argv[])
             ("bs"  , &bs_K,   "block size [KB]")
             ("bufs", &bufs_K, "buffer size [KB]")
             ("logfile", &logfile, "csv log file out")
+            ("random" , &random, "randomize")
             ;
     opt.Parse(argc,argv);
     const char *file_out = argv[1];
 
-    char *buffer = (char*)malloc(bufs_K*1024);
+    char *buffer = (char*)malloc(bufs_K*1024*2);
+    time_t t;
+    srand((unsigned) time(&t));
     for ( size_t i=0;i<bufs_K*1024;++i)
-        buffer[i] = (char)i;
+        buffer[i] = random > 0 ? (char)rand() : (char)i;
 
     Histogram<double> lat("lat",400,0,8);
     Histogram<double> bw("bw",400,0,4E3);
@@ -88,7 +92,8 @@ int main(int argc, char *argv[])
     double t0=0,t1;
     time.Start();
     for (size_t i=0; i<size_G*1024*1024/bs_K; /*i+=count*/) {
-        count = fwrite(buffer,bs_K*1024,bufs_K/bs_K,file);
+        size_t rand_i = random > 0 ? rand()%(bs_K*1024) : 0;
+        count = fwrite(buffer+rand_i,bs_K*1024,bufs_K/bs_K,file);
         i+=count;
         t1 = time.StopWatch_ms();
         if(count>0) {
@@ -124,7 +129,7 @@ int main(int argc, char *argv[])
     // std::cout << lat << "\n";
     // std::cout << bw  << "\n";
 
-    Plot2D plot("Posix fwrite latencies distribution");
+    Plot2D plot("Posix fwrite latency distribution");
     // plot.AddCurve(bw);
     plot.AddCurve(lat);
     plot.PrintToGnuplotFile("bw_h");

@@ -153,7 +153,7 @@ write_raw_CPPFLAGS = -I$(top_builddir)/ext/ccStickers/src
 write_raw_LDFLAGS  =
 write_raw_LDADD    = $(CCSTICKERS_LA)
 
-write_raw_ARGS = --size 10 --bs 512 --bufs 1024
+write_raw_ARGS = --size 10 --bs 512 --bufs 1024 --random 1
 write-raw.log: ##@tests run local write-raw application
 write-raw.log: ext write-raw
 	@ time ./write-raw write-raw.dat $(write_raw_ARGS)
