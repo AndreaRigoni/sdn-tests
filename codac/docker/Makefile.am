@@ -22,11 +22,11 @@ $(CODAC_NAME).tar:
 	$(error please enable libguest via docker)
 endif
 
-.PHONY: $(CODAC_NAME)_entry.sh
+#.PHONY: $(CODAC_NAME)_entry.sh
 $(CODAC_NAME)_entry.sh:
 	@ [ -f $@ ] || cp $(srcdir)/$@ .
 
-.PHONY: .dockerignore
+#.PHONY: .dockerignore
 .dockerignore:
 	@ cat > $@ << EOF
 	*
@@ -37,8 +37,8 @@ $(CODAC_NAME)_entry.sh:
 
 DOCKERFILE = Dockerfile_v$(CODAC_VERSION)
 
-.PHONY: Dockerfile
-$(DOCKERFILE): $(CODAC_NAME)_entry.sh .dockerignore
+# .PHONY: Dockerfile
+$(DOCKERFILE): | $(CODAC_NAME)_entry.sh .dockerignore
 	@ cat > $@ << EOF
 	FROM scratch
 	ADD $(CODAC_NAME).tar /
@@ -56,7 +56,7 @@ docker-image: $(DOCKERFILE) $(CODAC_NAME).tar
 ## ////////////////////////////////////////////////////////////////////////// ##
 
 MOSTLYCLEANFILES = Dockerfile $(DOWNLOADS)
-clean-all: ##@codac remove everything .. tar img and the docker installe instance
+clean-all: ##@codac remove everything .. tar img and the docker install instance
 clean-all:
 	docker rmi $(CODAC_LIBGUEST_DKIMG);
 	rm -rfi $(CODAC_NAME).tar $(CODAC_NAME).img

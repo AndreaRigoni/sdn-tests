@@ -1,0 +1,180 @@
+
+
+digraph G {
+
+  node [shape="record"
+		fontname = "Consolas"
+		];
+
+
+
+  archiver_main [label = " { \
+   main \l |\
+   dansrv_lib_build_timesatmp \l\
+   server_init \l\
+   main_accept_loop \l\
+  }"];
+
+  main_accept_loop [label = " { \
+   main_accept_loop \l|\
+   loop \{ \l\
+	accept(socket) \l\
+	get_in_addr(client) \l\
+	fork \l\
+	 - archivingProcess \l\
+   \} \l\
+  }"];
+
+  SOCKET_accept [label = " { \
+	SOCKET \l|\
+	accept(socket) \l\
+  }"];
+
+  get_in_addr [label = " { \
+	get_in_addr() \l|\
+  }"];
+
+  fork [label = " { \
+	fork() \l|\
+  }"];
+
+  archivingProcess [label = " { \
+	archivingProcess() \l|\
+	dansrv_reset_stream_group \l\
+	stream_read_number(remoteEndianess) \l\
+	stream_read_string(hostID) \l\
+	stream_read_number(BufferSize) \l\
+	loop \{ \l\
+	  stream_read_message \l\
+	  stream_unpack_message_header \l\
+	  case (RAW_MESSAGE) \l\
+	  case (NEW_BLOCK) \l\
+	  case (CLOSE_CONNECTION) \l\
+	\} \l\
+  }"];
+
+  #
+  stream_read_message [label = " { \
+	stream_read_message() \l|\
+	stream_read_bytes() \l\
+  }"];
+
+  #
+  stream_read_bytes [label = " { \
+	stream_read_bytes() \l|\
+	recv(socket) \l\
+  }"];
+
+  #
+  SOCKET_recv [label = " { \
+	SOCKET \l|\
+	recv(socket) \l\
+  }"];
+
+
+
+  RAW_MESSAGE [label = " { \
+	RAW_MESSAGE \l|\
+	loop \{ \l\
+	  stream_unpack_block_header \l\
+	  archive_process_client_byte_block \l\
+	  pthread_create(streamListener) \l\
+	\} \l\
+  }"];
+
+  #
+  NEW_BLOCK [label = " { \
+	NEW_BLOCK \l|\
+	loop \{ \l\
+	  stream_unpack_block_header \l\
+	  d1wave_unpack_block_header \l\
+	  dansrv_set_client_datablock_header \l\
+	  archive_write_datablock_all_locations \l\
+	\} \l\
+  }"];
+
+  streamListener [label = " { \
+	streamListener() \l|\
+	  stream_buff_read_raw \l\
+  }"];
+
+  stream_buff_read_raw [label = " { \
+	stream_buff_read_raw() \l|\
+	recv(socket) \l\
+  }"];
+
+  #
+  archive_write_datablock_all_locations [label = " { \
+	archive_write_datablock_all_locations() \l|\
+	dansrv_write_datablock() \l\
+  }"];
+
+  #
+  dansrv_write_datablock [label = " { \
+	dansrv_write_datablock() \l|\
+	dansrv_decompress_income_data() \l\
+	hdfsrv_flush_group() \l\
+	hdfsrv_write_data() \l\
+	hdfsrv_flush \l\
+  }"];
+
+  #
+  hdfsrv_write_data [label = " { \
+	hdfsrv_write_data() \l|\
+	hdfsrv_extent() \l\
+	H5Sset_extent_simple(dataspace) \l\
+	H5Sselect_hyperslab(dataspace) \l\
+	H5Sset_extent_simple(memspace) \l\
+	H5Dwrite(data,memspace,dataspace) \l\
+  }"];
+
+
+  archiver_main -> main_accept_loop;
+  main_accept_loop -> SOCKET_accept;
+  main_accept_loop -> get_in_addr;
+  main_accept_loop -> fork;
+  fork -> archivingProcess;
+
+  archivingProcess -> stream_read_message;
+  stream_read_message -> stream_read_bytes;
+  stream_read_bytes -> SOCKET_recv;
+
+  archivingProcess -> RAW_MESSAGE;
+  RAW_MESSAGE -> streamListener;
+  streamListener -> stream_buff_read_raw;
+  stream_buff_read_raw -> SOCKET_recv;
+
+  archivingProcess -> NEW_BLOCK;
+  NEW_BLOCK -> archive_write_datablock_all_locations
+  archive_write_datablock_all_locations -> dansrv_write_datablock
+  dansrv_write_datablock -> hdfsrv_write_data
+
+  subgraph cluster_1 {
+	archiver_main
+	main_accept_loop
+	get_in_addr
+	fork
+	;
+	label = "[dan-archiver-writer] archiver Daemon";
+	color=blue;
+  }
+//  subgraph cluster_2 {
+//	archivingProcess
+//	RAW_MESSAGE
+//	NEW_BLOCK
+//	;
+//	label = "process - archive stream";
+//	color=blue;
+//  }
+  subgraph cluster_3 {
+	streamListener
+	stream_buff_read_raw
+	;
+	label = "thread - streamListener";
+	color=blue;
+  }
+
+
+
+}
+

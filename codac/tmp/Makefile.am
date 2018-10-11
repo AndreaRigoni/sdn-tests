@@ -140,8 +140,28 @@ env-dump:
 
 # CU_PCF_DANCONF   = $(CU_SETTINGS_DIR)/dan_minimal.xml
 
-
-
-
 shell:
 	@ bash -l
+
+
+.dot.ps:
+	@ dot -Tps $< -o $@
+
+.dot.pdf:
+	@ dot -Tpdf $< -o $@
+
+.pdf.png:
+	@ convert $< $@
+
+
+DOTS = call_archiver \
+	   call_openstream
+
+$(DOTS):
+	@ $(MAKE) $@.pdf
+
+dots: ##@tests generate dot files for documentation
+dots: $(DOTS)
+
+CLEANFILES = $(addsuffix .pdf,$(DOTS)) $(addsuffix .png,$(DOTS))
+

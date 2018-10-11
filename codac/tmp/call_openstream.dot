@@ -1,0 +1,145 @@
+
+
+digraph G {
+
+  node [shape="record"
+		fontname = "Consolas"
+		];
+
+//  dan_publisher_openStream2D [label=" { \
+//	dan_publisher_openStream2D \l | \
+//	o [setup metadata] \l  \
+//	- dan_model_init_db_header() \l \
+//	- dan_model_set_dimensions() \l \
+//	- dan_model_set_sampling_rate() \l \
+//	- dan_RingShmPut() \l} \
+//  "];
+
+//  dan_RingShmPut [label=" { dan_RingShmPut | \
+//	o [setup daq shm] \l} \
+//  "];
+
+//  dan_publisher_openStream2D -> dan_RingShmPut;
+
+//  subgraph cluster_1 {
+//	dan_publisher_openStream2D
+//	dan_RingShmPut;
+//	label = "[dan-DAQ] Open Stream";
+//	color=blue;
+//  }
+
+
+
+
+  streamer_main [label = " { \
+   main \l |\
+   ccSubscriber \l\
+  }"];
+
+  ccSubscriber [label = " { \
+   ccSubscriber \l|\
+   dan_initLibrary_icprog \l\
+   dan_common_searchXMLConfiguration \l\
+   dan_create_stream_group \l\
+   dan_create_archive_stream_in_group \l\
+   dan_open_stream_group \l\
+   loop \{ \l\
+	 dan_write_archive_datablock_header \l\
+	 dan_write_archive_datablock_data_bytes \l\
+	 dan_commit_datablock \l\
+	 dan_subscriber_ackBlockReference_Source \l\
+	 usleep( delay ) \l\
+   \} \l\
+  }"];
+
+//  dan_create_archive_stream_in_group [label = " { \
+//	dan_create_archive_stream_in_group \l |\
+//	dan_set_stream_metadata_all \l \
+//	dan_create_archive_stream_own_meta \l\
+//  }"];
+
+  dan_open_stream_group [label = " { \
+  dan_open_stream_group \l |\
+  dan_send_command_data_group() \l\
+  dan_send_archive_stream_meta \l\
+  dan_send_command_group() \l\
+  }"];
+
+  dan_send_command_data [label = " { \
+  dan_send_command_data \l |\
+  dan_send_byte_block() \l\
+  dan_release_serial_data() \l\
+  }"];
+
+  dan_send_byte_block [label = " { \
+  dan_send_byte_block \l |\
+  stream_init_message() \l\
+  stream_pack_block_header() \l\
+  stream_send_message() \l\
+  stream_send_bytes() \l\
+  }"];
+
+  stream_send_bytes [label = " { \
+  stream_send_bytes(sockfd) \l |\
+  send(sockfd) \l\
+  }"];
+
+  dan_write_archive_datablock_header [label = " { \
+  dan_write_archive_datablock_header() \l |\
+  stream_init_message() \l\
+  stream_pack_block_header() \l\
+  stream_send_message() \l\
+  stream_send_bytes() \l\
+  }"];
+
+
+  dan_write_archive_datablock_data_bytes [label = " { \
+  dan_write_archive_datablock_data_bytes() \l |\
+  stream_send_bytes(connectionID) \l\
+  }"];
+
+  dan_commit_datablock [label = " { \
+  dan_commit_datablock() \l |\
+  stream_send_bytes(connectionID) \l\
+  }"];
+
+
+
+  // dan_RingShmPut -> ccSubscriber;
+  streamer_main -> ccSubscriber;
+//  ccSubscriber -> dan_create_archive_stream_in_group;
+
+  ccSubscriber -> dan_open_stream_group;
+  dan_open_stream_group -> dan_send_command_data;
+  dan_send_command_data -> dan_send_byte_block;
+  dan_send_byte_block -> stream_send_bytes;
+
+  ccSubscriber -> dan_write_archive_datablock_data_bytes;
+  dan_write_archive_datablock_data_bytes -> stream_send_bytes;
+
+  ccSubscriber -> dan_write_archive_datablock_header;
+  dan_write_archive_datablock_header -> stream_send_bytes;
+
+  ccSubscriber -> dan_commit_datablock;
+  dan_commit_datablock -> stream_send_bytes;
+
+  subgraph cluster_2 {
+	streamer_main
+	ccSubscriber
+//	dan_create_archive_stream_in_group
+	dan_open_stream_group
+	dan_send_command_data
+	dan_send_byte_block
+	stream_send_bytes
+	dan_write_archive_datablock_data_bytes
+	dan_write_archive_datablock_header
+	dan_commit_datablock
+	;
+	label = "[dan-DAQ] Streamer";
+	color=blue;
+  }
+
+
+
+}
+

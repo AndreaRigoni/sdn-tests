@@ -79,6 +79,10 @@ AM_LDFLAGS  = $(DAN_LDLIBS)
 LDADD       = $(top_builddir)/ext/ccStickers/libccStickers.la
 
 
+#danraw: ##@examples simple data data archiving using the raw disk write form posix
+#dansrv: ##@examples dansrv program as an example of data archiving through the srv api
+#danclt: ##@examples send a stream of data to a specific dan archiver daemon
+#test_multich: ##@examples concurrent threads write
 bin_PROGRAMS = danraw dansrv danclt test_multich
 
 danraw_SOURCES = dan_raw.cpp

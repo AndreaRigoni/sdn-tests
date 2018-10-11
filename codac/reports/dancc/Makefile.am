@@ -110,7 +110,7 @@ debug: $(NAME)
 clean_local:
 	@ rm -rf /tmp/data/*
 
-plot:
+plot: ##@tests plot all /tmp/data files
 	@ dan-plot VT /tmp/data/*.h5 0 0
 
 shell:
